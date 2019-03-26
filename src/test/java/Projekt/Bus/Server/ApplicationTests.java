@@ -1,4 +1,4 @@
-package Projekt.Bus;
+package Projekt.Bus.Server;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
