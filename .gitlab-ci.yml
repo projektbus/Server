@@ -20,6 +20,7 @@ build:
       - build
       - .gradle
   when: manual
+  allow_failure: false
 
 test:
   stage: test
@@ -31,3 +32,4 @@ test:
       - build
       - .gradle
   when: manual
+  allow_failure: false
