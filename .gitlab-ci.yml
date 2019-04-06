@@ -17,6 +17,11 @@ build:
     - mkdir -p ./ci-reports
   image: openjdk:8
   script:
+    - ls
+    - ls /home/build
+    - pwd
+    - ls /home/
+    - ls /home/build/gradlew
     - chmod +x /home/build/gradlew
     - chmod a+w /usr/bin
     - sudo -u build /home/build/gradlew clean build -PARCHIVA_CLMCORE_SNAPSHOTS_USERNAME=$ARCHIVA_CLMCORE_SNAPSHOTS_USERNAME -PARCHIVA_CLMCORE_SNAPSHOTS_PASSWORD=$ARCHIVA_CLMCORE_SNAPSHOTS_PASSWORD
