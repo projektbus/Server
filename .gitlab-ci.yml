@@ -1,5 +1,7 @@
 stages:
   - build
+  - package
+  - deploy
 
 cache:
   # Per-branch caching
@@ -7,7 +9,7 @@ cache:
   paths:
     - .gradle
 
-application-build:
+build:
   stage: build
   before_script:
     # This should help to enable gradle cache
