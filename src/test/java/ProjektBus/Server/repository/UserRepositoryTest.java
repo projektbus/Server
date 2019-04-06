@@ -20,7 +20,7 @@ public class UserRepositoryTest {
     public void shouldSaveUser() {
         repository.deleteAll();
         User user = repository.save(new User("User1", "email@email.com", "haslo"));
-        assertNull(user);
+        assertNotNull(user);
     }
 
 }
