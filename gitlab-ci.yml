@@ -1,13 +1,5 @@
 stages:
   - build
-  - package
-  - deploy
-
-cache:
-  # Per-branch caching
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - .gradle
 
 build:
   stage: build
