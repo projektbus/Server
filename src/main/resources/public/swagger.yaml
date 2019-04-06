@@ -1,0 +1,43 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Projekt Bus
+  description: Application made as university project (Java Spring Rest MongoDB)
+servers:
+  - url: http://localhost:8110
+paths:
+  /user:
+    post:
+      tags: [user]
+      description: Create new User
+      operationId: addUser
+      requestBody:
+        description: New user informations
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User created
+
+components:
+  schemas:
+    User:
+      required:
+        - id
+        - login
+        - email
+        - password
+      properties:
+        id:
+          type: string
+          readOnly: true
+        login:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
