@@ -1,0 +1,20 @@
+stages:
+  - build
+
+application-build:
+  stage: build
+  before_script:
+    # This should help to enable gradle cache
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir -p ./ci-reports
+  image: openjdk:8
+  script:
+    - chmod +x /home/build/gradlew
+    - chmod a+w /usr/bin
+    - sudo -u build /home/build/gradlew clean build -PARCHIVA_CLMCORE_SNAPSHOTS_USERNAME=$ARCHIVA_CLMCORE_SNAPSHOTS_USERNAME -PARCHIVA_CLMCORE_SNAPSHOTS_PASSWORD=$ARCHIVA_CLMCORE_SNAPSHOTS_PASSWORD
+  artifacts:
+    when: always
+    expire_in: 3d
+    paths:
+      - ./build/libs
+      - ./build/reports
