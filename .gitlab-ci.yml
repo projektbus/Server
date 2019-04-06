@@ -18,5 +18,3 @@ test:
   script:
   - ./gradlew check
   when: manual
-
-
