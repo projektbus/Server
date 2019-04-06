@@ -17,9 +17,9 @@ build:
     - mkdir -p ./ci-reports
   image: openjdk:8
   script:
-    - chmod +x gradlew
+    - chmod +x /home/build/gradlew
     - chmod a+w /usr/bin
-    - gradlew clean build
+    - sudo -u build /home/build/gradlew clean build -PARCHIVA_CLMCORE_SNAPSHOTS_USERNAME=$ARCHIVA_CLMCORE_SNAPSHOTS_USERNAME -PARCHIVA_CLMCORE_SNAPSHOTS_PASSWORD=$ARCHIVA_CLMCORE_SNAPSHOTS_PASSWORD
   artifacts:
     when: always
     expire_in: 3d
