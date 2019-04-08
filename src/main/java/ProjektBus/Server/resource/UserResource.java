@@ -1,38 +1,61 @@
 package ProjektBus.Server.resource;
 
+import ProjektBus.Server.mapper.JsonMapper;
 import ProjektBus.Server.model.User;
+import ProjektBus.Server.repository.UserRepository;
 import ProjektBus.Server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.List;
+
 
 @RestController
 public class UserResource {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/user")
-    public ResponseEntity saveUser(@RequestBody User user) throws URISyntaxException {
-        //Żeby tu się dostać to musisz trzeba wysałć zapytanie na adres http://localhost:8110/user POST a w Body zmienić typ na raw -> JSON
-        //i wysłać np.
-        //{
-        //    "login": "b",
-         //           "email": "c",
-        //            "password": "d"
-        //}
+    public ResponseEntity saveUser(@RequestBody User user) {
 
-        //Narazie nie mamy walidacji, więc zapisujemy wszystkich uzytkowników, nawet z tym samym loginem/mailem i nie szyfrujemy hasła
-        //ten retrun ma zwrócić Response Code 201 (created) i URI, które jest adres, który poźniej będziemy mogli użyć do zwrócenia użytkowniaka
-        //czyli to ma być: http://localhost:8110/user/"Tutaj ID Użytkownika", id użytkownika powinno się utworzyć automatycznie po
-        // zapisaniu go do bazy
         userService.registerUser(user);
-        return ResponseEntity.created(new URI("http://localhost:8110/user/" + user.getId())).build();
-        //ten URI w Postman-ie możesz zobaczyć w zakładce Headers (na dole)
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
     }
+
+    @GetMapping("/user")
+    public @ResponseBody ResponseEntity<String> userGet(@RequestParam("login") String login)  {
+        User user;
+        String retVal;
+        if (null != userRepository.findByLogin(login)) {
+            user = userRepository.findByLogin(login);
+            retVal = JsonMapper.userMapper(user);
+            return new ResponseEntity<>(retVal, HttpStatus.OK);
+        }
+        else if (null!=userRepository.findByEmail(login)) {
+            user = userRepository.findByEmail(login);
+            retVal = JsonMapper.userMapper(user);
+            return new ResponseEntity<>(retVal, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @GetMapping("/users")
+    public @ResponseBody ResponseEntity<String> userGet() {
+        String retVal;
+        List<User> userList;
+        userList=userRepository.findAll();
+        retVal=JsonMapper.listMapper(userList);
+        return new ResponseEntity<>(retVal, HttpStatus.OK);
+
+    }
+
 }
