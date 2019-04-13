@@ -33,7 +33,7 @@ public class UserResource {
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setSubject("Complete Registration to ProjectBus!");
         mailMessage.setFrom("projektbus2019@gmail.com");
         mailMessage.setText("To confirm your account, please click here : \n"
                 +"https://peaceful-sierra-14544.herokuapp.com/confirm-account?tokenCode="+confirmationToken.getTokenCode());
