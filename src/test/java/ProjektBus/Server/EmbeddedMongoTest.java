@@ -1,6 +1,7 @@
-package ProjektBus.Server.repository;
+package ProjektBus.Server;
 
 import ProjektBus.Server.model.User;
+import ProjektBus.Server.repository.UserRepository;
 import ProjektBus.Server.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,10 +13,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserRepositoryTest {
+public class EmbeddedMongoTest{
 
     @Autowired
     private UserService userService;
@@ -32,6 +34,7 @@ public class UserRepositoryTest {
 
         userService.registerUser(user);
         List<User> studs = userRepository.findAll();
+        assertTrue(studs.size() == 1);
         assertEquals("a", studs.get(0).getLogin());
     }
 }
