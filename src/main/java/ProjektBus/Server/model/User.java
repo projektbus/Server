@@ -13,11 +13,13 @@ public class User {
     private String login;
     private String email;
     private String password;
+    private boolean enabled;
 
     public User(String login, String email, String password) {
         this.login = login;
         this.email = email;
         this.password = password;
+        this.enabled = false;
     }
 
 }
