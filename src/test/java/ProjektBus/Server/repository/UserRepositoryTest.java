@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -16,12 +16,11 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository repository;
 
-    //TODO add embedded MongoDB
-    @Test
+   @Test
     public void shouldSaveUser() {
         repository.deleteAll();
-        User user = repository.save(new User("User1", "email@email.com", "haslo"));
-        assertNull(user);
+        User user = repository.save(new User("User1a", "email@email.com", "haslo"));
+        assertNotNull(user);
     }
 
 }
