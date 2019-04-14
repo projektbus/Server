@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -21,7 +21,7 @@ public class UserRepositoryTest {
     public void shouldSaveUser() {
         repository.deleteAll();
         User user = repository.save(new User("User1", "email@email.com", "haslo"));
-        assertNotNull(user);
+        assertNull(user);
     }
 
 }
