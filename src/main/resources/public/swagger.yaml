@@ -30,6 +30,7 @@ components:
         - login
         - email
         - password
+        - enabled
       properties:
         id:
           type: string
@@ -41,3 +42,6 @@ components:
         password:
           type: string
           writeOnly: true
+        enabled:
+          type: boolean
+          readOnly: true
