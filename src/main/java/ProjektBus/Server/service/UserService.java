@@ -5,4 +5,5 @@ import ProjektBus.Server.model.User;
 public interface UserService {
 
     User registerUser(User user);
+    Integer RemindPassword(String email);
 }
