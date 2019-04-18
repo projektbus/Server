@@ -16,5 +16,5 @@ build:
 test:
   stage: test
   script:
-  - ./gradlew check
+  - ./gradlew test
   when: manual
