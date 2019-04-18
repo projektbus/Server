@@ -1,7 +1,6 @@
-package ProjektBus.Server.repository;
+package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,8 @@ public class UserServiceTest {
 
     @Test
     public void shouldSaveUser() {
-        User user = new User("UserTest", "email@email.com", "haslo");
-        userService.registerUser(user);
+        User user = userService.registerUser(new User("User1a", "email@email.com", "haslo"));
+        assertNotNull(user);
         assertNotNull(user.getId());
     }
 }

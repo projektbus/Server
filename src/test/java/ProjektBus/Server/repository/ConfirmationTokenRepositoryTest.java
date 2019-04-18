@@ -1,6 +1,6 @@
 package ProjektBus.Server.repository;
 
-import ProjektBus.Server.model.User;
+import ProjektBus.Server.model.ConfirmationToken;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +9,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertNotNull;
 
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserRepositoryTest {
+public class ConfirmationTokenRepositoryTest {
 
     @Autowired
-    private UserRepository repository;
+    private ConfirmationTokenRepository repository;
 
-   @Test
-    public void shouldSaveUser() {
+    @Test
+    public void shouldSaveConfirmationToken() {
         repository.deleteAll();
-        User user = repository.save(new User("User1a", "email@email.com", "haslo"));
-        assertNotNull(user);
-        assertNotNull(user.getId());
+        ConfirmationToken confirmationToken = repository.save(new ConfirmationToken("userId"));
+        assertNotNull(confirmationToken);
+        assertNotNull(confirmationToken.getTokenId());
     }
 
 }

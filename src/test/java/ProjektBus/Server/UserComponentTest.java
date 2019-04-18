@@ -48,7 +48,7 @@ public class UserComponentTest {
         mockMvc.perform(get("/users").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].login").value("testLogin"))
                 .andExpect(jsonPath("$[0].email").value("test@wp.pl"))
                 .andExpect(jsonPath("$[0].password").value("testPassword"))
