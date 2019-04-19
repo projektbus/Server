@@ -7,3 +7,4 @@ spring:
         mongodb:
             uri: mongodb+srv://test:y52InmyjQkw7RnDe@projektbus-1sqzc.gcp.mongodb.net/test?retryWrites=true
             database: ProjektBus
+            port: 0
