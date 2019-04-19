@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {Application.class, ComponentTestConfig.class})
+        classes = {Application.class})
 public class UserComponentTest {
 
     private MockMvc mockMvc;
