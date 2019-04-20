@@ -21,11 +21,6 @@ paths:
       responses:
         '200':
           description: User created
-          headers:
-            Location:
-              schema:
-                type: string
-              description: URL adress of created User
 
 components:
   schemas:
