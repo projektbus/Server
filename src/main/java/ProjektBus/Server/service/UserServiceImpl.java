@@ -12,7 +12,6 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
     public User registerUser(User user) {
         user = userRepository.save(user);
         return user;

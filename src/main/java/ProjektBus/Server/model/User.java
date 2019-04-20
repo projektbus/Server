@@ -9,8 +9,7 @@ import org.springframework.data.annotation.Id;
 @Data
 @NoArgsConstructor
 public class User  {
-    @Autowired
-    private UserRepository userRepository;
+
     @Id
     private String id;
     private String login;

@@ -25,7 +25,7 @@ public class UserCreateRequestValidator implements Validator {
     public void validate(Object target, Errors errors) {
         UserCreateRequest userCreateRequest = (UserCreateRequest) target;
         if(userRepository.findByLogin(userCreateRequest.getLogin())!=null) {
-            errors.reject(String.valueOf(1),"User already exists");
+            errors.reject(String.valueOf(1),"Login already exists");
         }
 
         if(userRepository.findByEmail(userCreateRequest.getEmail())!=null) {
