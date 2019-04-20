@@ -16,7 +16,7 @@ public class User  {
     private String email;
     private String password;
 
-    @Autowired
+    
     public User( String login, String email, String password) {
 
         this.login = login;
