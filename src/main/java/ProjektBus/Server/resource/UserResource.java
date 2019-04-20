@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 public class UserResource {
 
@@ -36,6 +35,7 @@ public class UserResource {
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
         return new ResponseEntity(HttpStatus.CREATED);
+
     }
 
     @PostMapping("/confirm-account")

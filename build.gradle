@@ -29,6 +29,5 @@ dependencies {
 	compile group: 'com.kosprov.jargon2', name: 'jargon2-native-ri-backend', version: '1.1.1'
 	annotationProcessor 'org.projectlombok:lombok'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.1.4.RELEASE'
-	testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: '2.2.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
