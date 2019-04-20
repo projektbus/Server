@@ -1,12 +1,16 @@
 package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.User;
+import ProjektBus.Server.model.UserCreateRequest;
 import ProjektBus.Server.repository.UserRepository;
+import ProjektBus.Server.model.UserCreateRequestValidator;
 import ProjektBus.Server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 
 @RestController
@@ -16,13 +20,19 @@ public class UserResource {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserCreateRequestValidator userCreateRequestValidator;
 
     @PostMapping("/user")
-    public ResponseEntity saveUser(@RequestBody User user) {
-
+    public ResponseEntity saveUser(@RequestBody @Valid UserCreateRequest userCreateRequest) {
+        User user = userCreateRequest.toUser();
         userService.registerUser(user);
         return new ResponseEntity(HttpStatus.CREATED);
+    }
 
+    @InitBinder("userCreateRequest")
+    public void setupBinder(WebDataBinder binder) {
+        binder.addValidators(userCreateRequestValidator);
     }
 
     @GetMapping("/user")
