@@ -23,7 +23,6 @@ public class RepositoryTest {
     private UserRepository transactionRepository;
 
     @Autowired
-
     private MongoTemplate mongoTemplate;
 
     private final static List<String> USER_ID_LIST = Arrays.asList("b2b1f340-cba2-11e8-ad5d-873445c542a2", "bd5dd3a4-cba2-11e8-9594-3356a2e7ef10");
