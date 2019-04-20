@@ -40,12 +40,4 @@ public class AppConfig {
         return mailSender;
     }
 
-//    @Bean
-//    public MongoTemplate mongoTemplate() throws IOException {
-//        EmbeddedMongoFactoryBean mongo = new EmbeddedMongoFactoryBean();
-//        mongo.setBindIp("localhost");
-//        MongoClient mongoClient = mongo.getObject();
-//        MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, "a");
-//        return mongoTemplate;
-//    }
 }
