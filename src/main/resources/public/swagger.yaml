@@ -21,6 +21,11 @@ paths:
       responses:
         '200':
           description: User created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: URL adress of created User
 
 components:
   schemas:
@@ -30,7 +35,6 @@ components:
         - login
         - email
         - password
-        - enabled
       properties:
         id:
           type: string
@@ -42,6 +46,3 @@ components:
         password:
           type: string
           writeOnly: true
-        enabled:
-          type: boolean
-          readOnly: true
