@@ -39,5 +39,4 @@ public class AppConfig {
 
         return mailSender;
     }
-
 }

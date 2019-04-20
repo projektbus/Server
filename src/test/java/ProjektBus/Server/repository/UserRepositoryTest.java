@@ -1,32 +1,30 @@
-//package ProjektBus.Server.repository;
-//
-//import ProjektBus.Server.model.User;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-//import org.springframework.test.context.junit.jupiter.SpringExtension;
-//
-//import static org.junit.Assert.assertNotNull;
-//
-//@DataMongoTest
-//@ExtendWith(SpringExtension.class)
-//public class UserRepositoryTest {
-//
-//    private SampleRepositoryMongoImpl sampleRepositoryMongo;
-//
-//
-//    @Before
-//    public void setUp() throws Exception {
-//        sampleRepositoryMongo = new SampleRepositoryMongoImpl();
-//    }
-//
-//   @Test
-//    public void shouldSaveUser() {
-//        sampleRepositoryMongo.deleteAll();
-//        User user = sampleRepositoryMongo.save(new User("User1a", "email@email.com", "haslo"));
-//        assertNotNull(user);
-//        assertNotNull(user.getId());
-//    }
-//
-//}
+package ProjektBus.Server.repository;
+
+import ProjektBus.Server.model.User;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class UserRepositoryTest {
+
+    @Autowired
+    private UserRepository repository;
+
+    //TODO add embedded MongoDB
+    @Test
+    @Ignore
+    public void shouldSaveUser() {
+        repository.deleteAll();
+        User user = repository.save(new User("User1", "email@email.com", "haslo"));
+        assertNotNull(user);
+        assertNotNull(user.getId());
+    }
+
+}
