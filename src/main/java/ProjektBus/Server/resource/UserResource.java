@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 public class UserResource {
@@ -26,7 +28,7 @@ public class UserResource {
     private ConfirmationTokenService confirmationTokenService;
 
     @PostMapping("/user")
-    public ResponseEntity saveUser(@RequestBody User user) {
+    public ResponseEntity saveUser(@RequestBody User user) throws URISyntaxException {
 
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
@@ -36,8 +38,7 @@ public class UserResource {
         confirmationTokenService.save(confirmationToken);
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
-        return new ResponseEntity(HttpStatus.CREATED);
-
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/user?login=" + user.getLogin())).build();
     }
 
     @PostMapping("/confirm-account")

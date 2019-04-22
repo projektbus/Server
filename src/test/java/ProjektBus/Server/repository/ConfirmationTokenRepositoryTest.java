@@ -22,6 +22,7 @@ public class ConfirmationTokenRepositoryTest {
         repository.deleteAll();
         ConfirmationToken confirmationToken = repository.save(new ConfirmationToken("userId"));
         assertNotNull(confirmationToken);
+        assertNotNull(confirmationToken.getTokenId());
     }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
@@ -21,6 +22,7 @@ public class ConfirmationTokenServiceImplTest {
         ConfirmationToken confirmationToken = new ConfirmationToken("userId2");
         ConfirmationToken token = confirmationTokenService.save(confirmationToken);
         assertNotNull(token);
+        assertNotNull(token.getTokenId());
     }
 
     @Test
@@ -28,6 +30,7 @@ public class ConfirmationTokenServiceImplTest {
         ConfirmationToken confirmationToken = new ConfirmationToken("userId3");
         ConfirmationToken token = confirmationTokenService.save(confirmationToken);
         assertNotNull(confirmationTokenService.getByTokenCode(token.getTokenCode()));
+        assertEquals(confirmationTokenService.getByTokenCode(token.getTokenCode()).getUserId(), "userId3");
     }
 
 }

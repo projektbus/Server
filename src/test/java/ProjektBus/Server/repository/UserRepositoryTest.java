@@ -24,6 +24,7 @@ public class UserRepositoryTest {
         repository.deleteAll();
         User user = repository.save(new User("User1", "email@email.com", "haslo"));
         assertNotNull(user);
+        assertNotNull(user.getId());
     }
 
 }

@@ -18,8 +18,8 @@ public class UserServiceTest {
 
     @Test
     public void shouldSaveUser() {
-        User user = new User("UserTest", "email@email.com", "haslo");
-        userService.registerUser(user);
+        User user = userService.registerUser(new User("User1a", "email@email.com", "haslo"));
+        assertNotNull(user);
         assertNotNull(user.getId());
     }
 }
