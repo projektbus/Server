@@ -5,6 +5,7 @@ import ProjektBus.Server.model.User;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
+import ProjektBus.Server.utils.ProjektUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,10 @@ public class UserResource {
     @PostMapping("/user")
     public ResponseEntity saveUser(@RequestBody User user) throws URISyntaxException {
 
+        String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
+        user.setPassword(passwordEncode);
         userService.registerUser(user);
+
         ConfirmationToken confirmationToken = new ConfirmationToken(user.getId());
         confirmationTokenService.save(confirmationToken);
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
