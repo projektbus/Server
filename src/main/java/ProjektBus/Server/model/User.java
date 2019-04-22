@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 
 @Data
 @NoArgsConstructor
-public class User {
+public class User  {
 
     @Id
     private String id;
@@ -15,7 +15,9 @@ public class User {
     private String password;
     private boolean enabled;
 
-    public User(String login, String email, String password) {
+    
+    public User( String login, String email, String password) {
+
         this.login = login;
         this.email = email;
         this.password = password;
@@ -23,3 +25,4 @@ public class User {
     }
 
 }
+

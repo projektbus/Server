@@ -2,6 +2,8 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
+import ProjektBus.Server.model.UserCreateRequest;
+import ProjektBus.Server.model.UserCreateRequestValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
@@ -10,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -25,11 +29,14 @@ public class UserResource {
     private EmailSenderService emailSenderService;
 
     @Autowired
+    private UserCreateRequestValidator userCreateRequestValidator;
+
+    @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
     @PostMapping("/user")
-    public ResponseEntity saveUser(@RequestBody User user) throws URISyntaxException {
-
+    public ResponseEntity saveUser(@RequestBody @Valid UserCreateRequest userCreateRequest) throws URISyntaxException {
+        User user = userCreateRequest.toUser();
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
         userService.registerUser(user);
@@ -59,6 +66,11 @@ public class UserResource {
         else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
+    }
+
+    @InitBinder("userCreateRequest")
+    public void setupBinder(WebDataBinder binder) {
+        binder.addValidators(userCreateRequestValidator);
     }
 
     @GetMapping("/user")
