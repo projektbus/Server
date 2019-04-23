@@ -2,8 +2,7 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.model.UserCreateRequest;
-import ProjektBus.Server.model.UserCreateRequestValidator;
+import ProjektBus.Server.model.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
@@ -19,6 +18,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+//import ProjektBus.Server.model.UserValidator;
+
 @RestController
 public class UserResource {
 
@@ -29,14 +30,13 @@ public class UserResource {
     private EmailSenderService emailSenderService;
 
     @Autowired
-    private UserCreateRequestValidator userCreateRequestValidator;
+    private UserValidator userValidator;
 
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
     @PostMapping("/user")
-    public ResponseEntity saveUser(@RequestBody @Valid UserCreateRequest userCreateRequest) throws URISyntaxException {
-        User user = userCreateRequest.toUser();
+    public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
         userService.registerUser(user);
@@ -66,11 +66,6 @@ public class UserResource {
         else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
-    }
-
-    @InitBinder("userCreateRequest")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(userCreateRequestValidator);
     }
 
     @GetMapping("/user")
@@ -104,4 +99,8 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
+    @InitBinder("user")
+    public void setupBinder(WebDataBinder binder) {
+        binder.addValidators(userValidator);
+    }
 }

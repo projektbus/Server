@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.Properties;
 
@@ -38,5 +39,12 @@ public class AppConfig {
         props.put("mail.smtp.starttls.enable", "true");
 
         return mailSender;
+    }
+
+    @Bean  // Magic entry
+    public DispatcherServlet dispatcherServlet() {
+        DispatcherServlet ds = new DispatcherServlet();
+        ds.setThrowExceptionIfNoHandlerFound(true);
+        return ds;
     }
 }
