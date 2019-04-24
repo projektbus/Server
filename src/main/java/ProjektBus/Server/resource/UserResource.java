@@ -18,8 +18,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-//import ProjektBus.Server.model.UserValidator;
-
 @RestController
 public class UserResource {
 
