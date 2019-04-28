@@ -2,7 +2,7 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.model.UserValidator;
+import ProjektBus.Server.validation.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;

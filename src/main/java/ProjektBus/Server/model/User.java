@@ -18,15 +18,15 @@ public class User {
     @Id
     private String id;
 
-    @NotNull(message = "Field is required!")
+    @NotNull(message = "Field is required")
     @Size(min = 5, max = 32, message = "Size must be between 5 and 32 letters")
     private String login;
 
-    @NotNull(message = "Field is required!")
+    @NotNull(message = "Field is required")
     @Size(min = 5, max = 32, message = "Size must be between 5 and 32 letters")
     private String email;
 
-    @NotNull(message = "Field is required!")
+    @NotNull(message = "Field is required")
     @Size(min = 8, max = 32, message = "Size must be between 5 and 32 letters")
     private String password;
 

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -15,8 +15,7 @@ public class ApplicationError {
     private List<String> errors;
 
     public ApplicationError(HttpStatus status, String error) {
-        super();
         this.status = status;
-        errors = Arrays.asList(error);
+        this.errors = Collections.singletonList(error);
     }
 }

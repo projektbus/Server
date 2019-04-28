@@ -1,5 +1,6 @@
-package ProjektBus.Server.model;
+package ProjektBus.Server.validation;
 
+import ProjektBus.Server.model.User;
 import ProjektBus.Server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
