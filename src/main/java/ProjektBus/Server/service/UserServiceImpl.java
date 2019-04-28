@@ -3,7 +3,6 @@ package ProjektBus.Server.service;
 import ProjektBus.Server.model.User;
 import ProjektBus.Server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 
 public class UserServiceImpl implements UserService {

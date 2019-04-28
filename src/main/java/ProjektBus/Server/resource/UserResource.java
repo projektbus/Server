@@ -2,7 +2,7 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.model.UserCreateRequestValidator;
+import ProjektBus.Server.validation.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
@@ -28,14 +28,13 @@ public class UserResource {
     private EmailSenderService emailSenderService;
 
     @Autowired
-    private ConfirmationTokenService confirmationTokenService;
+    private UserValidator userValidator;
 
     @Autowired
-    private UserCreateRequestValidator userCreateRequestValidator;
+    private ConfirmationTokenService confirmationTokenService;
 
     @PostMapping("/user")
-    public ResponseEntity saveUser(@RequestBody @Valid User user) throws URISyntaxException {
-
+    public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
         userService.registerUser(user);
@@ -45,11 +44,6 @@ public class UserResource {
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
         return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/user?login=" + user.getLogin())).build();
-    }
-
-    @InitBinder("userCreateRequest")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(userCreateRequestValidator);
     }
 
     @PostMapping("/confirm-account")
@@ -103,4 +97,8 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
+    @InitBinder("user")
+    public void setupBinder(WebDataBinder binder) {
+        binder.addValidators(userValidator);
+    }
 }
