@@ -33,6 +33,7 @@ public class UserResource {
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/user")
     public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
@@ -46,6 +47,7 @@ public class UserResource {
         return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/user?login=" + user.getLogin())).build();
     }
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/confirm-account")
     public ResponseEntity confirmAccount(@RequestParam("tokenCode") String confirmationToken) {
         ConfirmationToken token = confirmationTokenService.getByTokenCode(confirmationToken);
@@ -66,6 +68,7 @@ public class UserResource {
 
     }
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/user")
     public @ResponseBody ResponseEntity getUser(@RequestParam("login") String login)  {
         if (null != userService.getUserByLogin(login)) {
@@ -80,6 +83,7 @@ public class UserResource {
 
     }
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/users")
     public @ResponseBody ResponseEntity getUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
