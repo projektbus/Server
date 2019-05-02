@@ -22,6 +22,11 @@ public class BusStopServiceImpl implements BusStopService {
     }
 
     @Override
+    public BusStop getBusStopById(String id) {
+        return busStopRepository.findBusStopById(id);
+    }
+
+    @Override
     public List<BusStop> getAllBusStops() {
         return busStopRepository.findAll();
     }
