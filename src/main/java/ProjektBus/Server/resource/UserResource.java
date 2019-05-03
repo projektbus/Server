@@ -90,6 +90,33 @@ public class UserResource {
 
     }
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("/login")
+    public @ResponseBody ResponseEntity getLogin(@RequestParam("login") String login,@RequestParam("password") String password) {
+
+        if (null != userService.getUserByLogin(login)) {
+            User userLogin = userService.getUserByLogin(login);
+            User userMail = userService.getUserByEmail(login);
+            String passwordEncode = ProjektUtils.passwordEncode(password);
+
+            if (userLogin != null) {
+                if (userLogin.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("USER LOGGED SUCCESSFULLY", HttpStatus.OK);
+                } else
+                    return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+            } else if (userMail != null) {
+                if (userMail.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("USER LOGGED SUCCESSFULLY", HttpStatus.OK);
+                } else
+                    return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+        }
+        else
+            return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+    }
+
+
     private void sendEmailWithConfirmationTokenToUser(User user, ConfirmationToken confirmationToken) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
