@@ -22,6 +22,11 @@ public class AppConfig {
     }
 
     @Bean
+    public BusLineService getBusLineService(){
+        return new BusLineServiceImpl();
+    }
+
+    @Bean
     public ConfirmationTokenService getConfirmationTokenService() {
         return new ConfirmationTokenServiceImpl();
     }
