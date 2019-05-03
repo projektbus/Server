@@ -55,7 +55,7 @@ public class UserResource {
         if(token != null) {
             User user = userService.getUserById(token.getUserId());
             if(user.isEnabled()) {
-                return new ResponseEntity("ACCOUNT ALREADY CONFIRMED", HttpStatus.CONFLICT);
+                return new ResponseEntity("Account already confirmed", HttpStatus.CONFLICT);
             }
             else {
                 user.setEnabled(true);
@@ -78,7 +78,7 @@ public class UserResource {
             return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
         }
 
     }

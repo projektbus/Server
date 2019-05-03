@@ -1,9 +1,6 @@
 package ProjektBus.Server.config;
 
-import ProjektBus.Server.service.ConfirmationTokenService;
-import ProjektBus.Server.service.ConfirmationTokenServiceImpl;
-import ProjektBus.Server.service.UserService;
-import ProjektBus.Server.service.UserServiceImpl;
+import ProjektBus.Server.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,6 +14,11 @@ public class AppConfig {
     @Bean
     public UserService getUserService(){
         return new UserServiceImpl();
+    }
+
+    @Bean
+    public BusStopService getBusStopService(){
+        return new BusStopServiceImpl();
     }
 
     @Bean
