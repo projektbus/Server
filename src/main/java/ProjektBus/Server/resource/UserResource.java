@@ -2,11 +2,13 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.validation.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ProjektUtils;
+import ProjektBus.Server.validation.UserValidator;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 @RestController
 public class UserResource {
@@ -95,6 +98,23 @@ public class UserResource {
                 + "https://peaceful-sierra-14544.herokuapp.com/confirm-account?tokenCode=" + confirmationToken.getTokenCode());
 
         emailSenderService.sendEmail(mailMessage);
+    }
+
+    //Logiwanie czyli utworzenie tokena dla danego user-a
+    @PostMapping("/login")
+    public String test(@RequestBody User user){
+        long currentTimeMillis = System.currentTimeMillis();
+        //Token
+        return Jwts.builder()
+                //użytkownik
+                .setSubject(user.getLogin())
+                //rola
+                .claim("roles", "user")
+                .setIssuedAt(new Date(currentTimeMillis))
+                .setExpiration(new Date(currentTimeMillis + 20000))
+                //tu jargon dać pewnie
+                .signWith(SignatureAlgorithm.HS512, user.getPassword())
+                .compact();
     }
 
     @InitBinder("user")

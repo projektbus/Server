@@ -1,6 +1,4 @@
-/Server/.gradle/*
-/Server/.idea/*
-/Server/out/*
-/AuthorizationServer/.gradle/*
-/AuthorizationServer/.idea/*
-/AuthorizationServer/out/*
+.gradle/*
+.idea/*
+out/*
+

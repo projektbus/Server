@@ -1,7 +1,0 @@
-server:
-  port: 8220
-  servlet:
-    context-path: /auth
-spring:
-  application:
-    name: AuthorizationServer
