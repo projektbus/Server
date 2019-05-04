@@ -22,6 +22,11 @@ public class BusLineServiceImpl implements BusLineService {
     }
 
     @Override
+    public void deleteBusLine(BusLine busLine) {
+        busLineRepository.delete(busLine);
+    }
+
+    @Override
     public List<BusLine> getAllBusLines() {
         return busLineRepository.findAll();
     }

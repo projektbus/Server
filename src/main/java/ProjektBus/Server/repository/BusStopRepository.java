@@ -6,6 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface BusStopRepository extends MongoRepository<BusStop, String> {
 
     BusStop findByName(String name);
-    BusStop findBusStopById(String id);
 
 }

@@ -1,9 +1,6 @@
 package ProjektBus.Server.model;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.Valid;
@@ -12,6 +9,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class BusStop {
@@ -27,8 +25,4 @@ public class BusStop {
     @Valid
     private MyGeoPoint myGeoPoint;
 
-    public BusStop(String name, MyGeoPoint myGeoPoint) {
-        this.name = name;
-        this.myGeoPoint = myGeoPoint;
-    }
 }

@@ -34,7 +34,7 @@ public class UserResource {
     private ConfirmationTokenService confirmationTokenService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/user")
+    @PostMapping("/users")
     public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
@@ -69,8 +69,8 @@ public class UserResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/user")
-    public @ResponseBody ResponseEntity getUser(@RequestParam("login") String login)  {
+    @GetMapping("/users/{login}")
+    public @ResponseBody ResponseEntity getUser(@PathVariable String login)  {
         if (null != userService.getUserByLogin(login)) {
             return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
         }
@@ -101,7 +101,7 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
-    @InitBinder("user")
+    @InitBinder("users")
     public void setupBinder(WebDataBinder binder) {
         binder.addValidators(userValidator);
     }

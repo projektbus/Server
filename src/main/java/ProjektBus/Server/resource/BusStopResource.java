@@ -23,7 +23,7 @@ public class BusStopResource {
     private BusStopValidator busStopValidator;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/busStop")
+    @PostMapping("/bus-stops")
     public ResponseEntity saveBusStop(@Valid @RequestBody BusStop busStop) throws URISyntaxException {
         busStopService.addBusStop(busStop);
 
@@ -31,8 +31,8 @@ public class BusStopResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/busStop")
-    public @ResponseBody ResponseEntity getBusStop(@RequestParam("name") String name)  {
+    @GetMapping("/bus-stops/{name}")
+    public @ResponseBody ResponseEntity getBusStop(@PathVariable("name") String name)  {
         if (null != busStopService.getBusStopByName(name)) {
             return new ResponseEntity(busStopService.getBusStopByName(name), HttpStatus.OK);
         }
@@ -43,15 +43,15 @@ public class BusStopResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/busStops")
+    @GetMapping("/bus-stops")
     public @ResponseBody ResponseEntity getBusStops() {
         return new ResponseEntity(busStopService.getAllBusStops(), HttpStatus.OK);
 
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @DeleteMapping("/busStop")
-    public @ResponseBody ResponseEntity deleteBusStop(@RequestParam("name") String name)  {
+    @DeleteMapping("/bus-stops/{name}")
+    public @ResponseBody ResponseEntity deleteBusStop(@PathVariable("name") String name)  {
         BusStop busStop = busStopService.getBusStopByName(name);
         if (busStop != busStopService.getBusStopByName(name)) {
             busStopService.deleteBusStop(busStop);

@@ -23,7 +23,7 @@ public class BusStopServiceImpl implements BusStopService {
 
     @Override
     public BusStop getBusStopById(String id) {
-        return busStopRepository.findBusStopById(id);
+        return busStopRepository.findById(id).isPresent() ? busStopRepository.findById(id).get() : null;
     }
 
     @Override
