@@ -62,9 +62,9 @@ public class BusStopResource {
         }
     }
 
-    @InitBinder("busStop")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(busStopValidator);
-    }
+//    @InitBinder("busStop")
+//    public void setupBinder(WebDataBinder binder) {
+//        binder.addValidators(busStopValidator);
+//    }
 
 }
