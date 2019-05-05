@@ -45,16 +45,33 @@ public class UserResource {
 
     }
 
-    @GetMapping("/user")
-    public @ResponseBody ResponseEntity updatePassword(@RequestBody User user, @RequestParam("password")String password){
-        userService.updatePassword(user, password);
-        return new ResponseEntity(HttpStatus.OK);
+    @PutMapping("/users/{login}")
+    public @ResponseBody ResponseEntity updatePassword(@PathVariable("login") String login,@RequestParam("password")String password, @RequestParam("new password")String newpassword){
+        if (null != userRepository.findByLogin(login)) {
+            if(userRepository.findByLogin(login).getPassword()==password){
+                userService.updatePassword(userRepository.findByLogin(login),newpassword);
+                return new ResponseEntity(HttpStatus.OK);
+            }
+            else{
+                return new ResponseEntity("BAD PASSWORD", HttpStatus.BAD_REQUEST);
+            }
+        }
+        else
+        {
+            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/user")
-    public ResponseEntity deleteUser(@RequestBody User user){
-        userService.deleteUser(user);
-        return new ResponseEntity(HttpStatus.OK);
+    @DeleteMapping("/user")
+    public ResponseEntity deleteUser(@RequestParam("login") String login){
+        if (null != userRepository.findByLogin(login)) {
+            userService.deleteUser(userRepository.findByLogin(login));
+            return new ResponseEntity( HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }

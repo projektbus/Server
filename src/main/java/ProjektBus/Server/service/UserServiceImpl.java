@@ -4,6 +4,7 @@ import ProjektBus.Server.model.User;
 import ProjektBus.Server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 public class UserServiceImpl implements UserService {
 
     @Autowired
