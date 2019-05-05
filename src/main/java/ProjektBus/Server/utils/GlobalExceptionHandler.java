@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,13 @@ public class GlobalExceptionHandler{
 
         logger.error(ex.getMessage());
         return new ApplicationError(HttpStatus.BAD_REQUEST, errors);
+    }
+
+    @ExceptionHandler(ServletException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    protected ApplicationError handleServletException(ServletException ex, WebRequest request){
+        logger.error(ex.getMessage());
+        return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

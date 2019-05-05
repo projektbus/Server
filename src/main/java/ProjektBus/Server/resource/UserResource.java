@@ -100,20 +100,21 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
-    //Logiwanie czyli utworzenie tokena dla danego user-a
-    @PostMapping("/login")
+    @PostMapping("/loginn")
     public String test(@RequestBody User user){
         long currentTimeMillis = System.currentTimeMillis();
         //Token
         return Jwts.builder()
-                //użytkownik
-                .setSubject(user.getLogin())
+                //użytkownik lub email dodać
+//                .setSubject(user.getLogin())
                 //rola
-                .claim("roles", "user")
+                .claim("login", user.getLogin())
                 .setIssuedAt(new Date(currentTimeMillis))
-                .setExpiration(new Date(currentTimeMillis + 20000))
+                //Czas życia tokenu - 20 minut
+                .setExpiration(new Date(currentTimeMillis + 200))
+//                .setExpiration(new Date(currentTimeMillis + 7200000))
                 //tu jargon dać pewnie
-                .signWith(SignatureAlgorithm.HS512, user.getPassword())
+                .signWith(SignatureAlgorithm.HS512, "TbUL55^O|T<;UyT".getBytes())
                 .compact();
     }
 

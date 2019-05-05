@@ -23,54 +23,28 @@ public class JwtFilter extends BasicAuthenticationFilter {
         super(authenticationManager);
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-
-        String header = request.getHeader("Authorization");
-
-        UsernamePasswordAuthenticationToken usernameResult = getAuthenticationByToken(header);
-
-        SecurityContextHolder.getContext().setAuthentication(usernameResult);
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        String authorizationHeader = request.getHeader("Authorization");
+        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+            throw new ServletException("Authorization header missing or wrong type");
+        }
+        UsernamePasswordAuthenticationToken authResult = getAuthenticationByToken(authorizationHeader);
+        SecurityContextHolder.getContext().setAuthentication(authResult);
         chain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) {
+    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) throws ServletException {
+        Jws<Claims> claimsJws = null;
+        try {
+            claimsJws = Jwts.parser().setSigningKey("TbUL55^O|T<;UyT".getBytes())
+                    .parseClaimsJws(header.replace("Bearer ", ""));
+        }
+        catch (Exception ex){
+            throw new ServletException("Token wrong formatted");
+        }
+        String username = claimsJws.getBody().get("sub").toString();
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.singleton(new SimpleGrantedAuthority("user"));
 
-        Jws<Claims> claims =  Jwts.parser().setSigningKey("TbUL55^O|T<;UyT".getBytes())
-                .parseClaimsJws(header.replace("Bearer ", ""));
-
-        String role = claims.getBody().get("role").toString();
-        String username = claims.getBody().get("name").toString();
-
-        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.singleton(new SimpleGrantedAuthority(role));
-
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
-
-        return usernamePasswordAuthenticationToken;
+        return new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
     }
-
-//    @Override
-//    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-//        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-//
-//        String httpHeader = httpServletRequest.getHeader("authorization");
-//
-//        if(httpHeader == null || !httpHeader.startsWith("Bearer ")){
-//            throw new ServletException("Wrong or empty header");
-//        }
-//        else{
-//            try {
-//                String token = httpHeader.substring(7);
-////                wyciągnięcie hasła
-////                sprawdzić czy hasło poprawne!, jak nie to wyjątek
-//                Claims claims = Jwts.parser().setSigningKey("testPass").parseClaimsJws(token).getBody();
-//                request.setAttribute("claims", claims);
-//            } catch(Exception ex){
-//                throw new ServletException("Session expired");
-//            }
-//        }
-//        chain.doFilter(request, response);
-//    }
 }

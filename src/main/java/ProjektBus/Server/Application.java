@@ -15,7 +15,7 @@ public class Application {
 //	public FilterRegistrationBean filterRegistrationBean(){
 //		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
 //		filterRegistrationBean.setFilter(new JwtFilter());
-//		filterRegistrationBean.setUrlPatterns(Collections.singletonList("/test1/*"));
+//		filterRegistrationBean.setUrlPatterns(Collections.singletonList("/test/*"));
 //		return filterRegistrationBean;
 //	}
 }

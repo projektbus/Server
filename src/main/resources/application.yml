@@ -23,4 +23,3 @@ spring:
 #            userAuthorizationUri: http://localhost:8220/auth/oauth/authorize
 #        resource:
 #            userInfoUri: http://localhost:8220/auth/user/me
-#

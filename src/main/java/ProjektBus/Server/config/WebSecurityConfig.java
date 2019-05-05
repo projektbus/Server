@@ -6,32 +6,36 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-//    @Bean
-//    PasswordEncoder getPasswordEncoder(){
-//        return  new BCryptPasswordEncoder();
-//    }
 //
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication()
-//                .withUser(User.builder()
-//                .username("test")
-//                .password(getPasswordEncoder().encode("test"))
-//                .roles("ADMIN"));
-//        super.configure(auth);
-//    }
-
-    //Klasa określa jakie enpointy są zabezpieczone
-    //tylko / i /login endpointy będą dostępne bez autoryzacji
+////    @Bean
+////    PasswordEncoder getPasswordEncoder(){
+////        return  new BCryptPasswordEncoder();
+////    }
+////
+////    @Override
+////    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+////        auth.inMemoryAuthentication()
+////                .withUser(User.builder()
+////                .username("test")
+////                .password(getPasswordEncoder().encode("test"))
+////                .roles("ADMIN"));
+////        super.configure(auth);
+////    }
+//
+////    Klasa określa jakie enpointy są zabezpieczone
+////    tylko / i /login endpointy będą dostępne bez autoryzacji
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/test2")
-                .authenticated()
-                .antMatchers("/test3")
-                .hasRole("ADMIN")
-                .and()
-                .addFilter(new JwtFilter(authenticationManager()));
+        http
+            .csrf().disable()
+            .antMatcher("/test*").authorizeRequests()
+            .anyRequest().authenticated()
+            .and().addFilter(new JwtFilter(authenticationManager()));
+
+//            .authorizeRequests()
+//            .antMatchers("/loginn").authenticated()
+//            .antMatchers("/login").permitAll()
+//            .antMatchers("/test2").authenticated()
+//            .and().addFilter(new JwtFilter(authenticationManager()));
     }
 }
