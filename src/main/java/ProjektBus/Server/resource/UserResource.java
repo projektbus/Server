@@ -45,4 +45,16 @@ public class UserResource {
 
     }
 
+    @GetMapping("/user")
+    public @ResponseBody ResponseEntity updatePassword(@RequestBody User user, @RequestParam("password")String password){
+        userService.updatePassword(user, password);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity deleteUser(@RequestBody User user){
+        userService.deleteUser(user);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 }
