@@ -12,6 +12,11 @@ public class BusLineServiceImpl implements BusLineService {
     private BusLineRepository busLineRepository;
 
     @Override
+    public BusLine getBusLineById(String id) {
+        return busLineRepository.findById(id).isPresent() ? busLineRepository.findById(id).get() : null ;
+    }
+
+    @Override
     public BusLine addBusLine(BusLine busLine) {
         return busLineRepository.save(busLine);
     }

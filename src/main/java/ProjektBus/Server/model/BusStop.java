@@ -1,6 +1,6 @@
 package ProjektBus.Server.model;
 
-import ProjektBus.Server.validation.UniqueBusStopName;
+import ProjektBus.Server.validation.validationInterfaces.UniqueBusStopName;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
@@ -19,13 +19,13 @@ public class BusStop {
     @Id
     private String id;
 
-    @NotNull(message = "Field is required")
-    @Size(min = 5, max = 32, message = "Size must be between 5 and 32 letters")
-    @UniqueBusStopName
-    @Pattern(regexp = "[A-Za-z]+[a-zA-Z0-9]*")
+    @NotNull(message = "{field.required}")
+    @Size(min = 5, max = 32, message = "{name.size}")
+    @UniqueBusStopName(message = "{busStop.name.unique}")
+    @Pattern(regexp = "[A-Za-z]+[a-zA-Z0-9]*", message = "{busStop.name.pattern}")
     private String name;
 
-    @NotNull(message = "Field is required")
+    @NotNull(message = "{field.required}")
     @Valid
     private MyGeoPoint myGeoPoint;
 

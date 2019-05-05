@@ -3,11 +3,10 @@ package ProjektBus.Server.resource;
 import ProjektBus.Server.model.BusLine;
 import ProjektBus.Server.model.BusStop;
 import ProjektBus.Server.service.BusLineService;
-import ProjektBus.Server.validation.BusLineValidator;
+import ProjektBus.Server.service.BusStopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,7 +20,7 @@ public class BusLineResource {
     private BusLineService busLineService;
 
     @Autowired
-    private BusLineValidator busLineValidator;
+    private BusStopService busStopService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/bus-lines")
@@ -29,6 +28,50 @@ public class BusLineResource {
         busLineService.addBusLine(busLine);
 
         return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/busLine?name=" + busLine.getName())).build();
+    }
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("/bus-lines/{busLineId}/bus-stops/{busStopId}")
+    public ResponseEntity assBusStopToBusLine(@PathVariable("busLineId") String busLineId, @PathVariable("busStopId") String busStopId ) {
+        BusLine busLine = busLineService.getBusLineById(busLineId);
+        BusStop busStop = busStopService.getBusStopById(busStopId);
+
+        if(busLine == null) {
+            return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
+        }
+        else if(busStop == null) {
+            return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
+        }
+        else if(busLine.isBusStopOnList(busStopId)) {
+            return new ResponseEntity("Bus stop already added", HttpStatus.CONFLICT);
+        }
+        else {
+            busLine.addBusStopToList(busStop);
+            busLineService.addBusLine(busLine);
+            return new ResponseEntity("Bus stop added successfully", HttpStatus.OK);
+        }
+    }
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @DeleteMapping("/bus-lines/{busLineId}/bus-stops/{busStopId}")
+    public ResponseEntity deleteBusStopFromBusLine(@PathVariable("busLineId") String busLineId, @PathVariable("busStopId") String busStopId ) {
+        BusLine busLine = busLineService.getBusLineById(busLineId);
+        BusStop busStop = busStopService.getBusStopById(busStopId);
+
+        if(busLine == null) {
+            return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
+        }
+        else if(busStop == null) {
+            return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
+        }
+        else if(!busLine.isBusStopOnList(busStopId)) {
+            return new ResponseEntity("Bus stop not on list", HttpStatus.CONFLICT);
+        }
+        else {
+            busLine.deleteBusStopFromList(busStop);
+            busLineService.addBusLine(busLine);
+            return new ResponseEntity("Bus stop deleted successfully", HttpStatus.OK);
+        }
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -63,9 +106,4 @@ public class BusLineResource {
         }
     }
 
-
-    @InitBinder("bus-lines")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(busLineValidator);
-    }
 }

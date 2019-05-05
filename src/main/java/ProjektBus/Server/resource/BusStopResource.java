@@ -2,11 +2,9 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.BusStop;
 import ProjektBus.Server.service.BusStopService;
-import ProjektBus.Server.validation.BusStopValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,9 +16,6 @@ public class BusStopResource {
 
     @Autowired
     private BusStopService busStopService;
-
-    @Autowired
-    private BusStopValidator busStopValidator;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/bus-stops")
@@ -39,7 +34,7 @@ public class BusStopResource {
         else {
             return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
         }
-
+//TODO zobaczyc czy odpowiedzi mozna dawac z pliku
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -61,10 +56,5 @@ public class BusStopResource {
             return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
         }
     }
-
-//    @InitBinder("busStop")
-//    public void setupBinder(WebDataBinder binder) {
-//        binder.addValidators(busStopValidator);
-//    }
 
 }

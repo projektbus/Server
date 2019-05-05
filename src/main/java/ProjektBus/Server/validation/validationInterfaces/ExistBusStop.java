@@ -1,4 +1,6 @@
-package ProjektBus.Server.validation;
+package ProjektBus.Server.validation.validationInterfaces;
+
+import ProjektBus.Server.validation.validator.ExistBusStopValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,9 +11,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UniqueBusStopNameValidator.class)
-public @interface UniqueBusStopName {
-    String message() default "Bus stop with this name exists"; //TODO przenieść do pliku
+@Constraint(validatedBy = ExistBusStopValidator.class)
+public @interface ExistBusStop {
+    String message() default "";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
