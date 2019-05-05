@@ -2,7 +2,6 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.validation.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,13 +26,10 @@ public class UserResource {
     private EmailSenderService emailSenderService;
 
     @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/user")
+    @PostMapping("/users")
     public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
@@ -44,7 +39,7 @@ public class UserResource {
         confirmationTokenService.save(confirmationToken);
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
-        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/user?login=" + user.getLogin())).build();
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users?login=" + user.getLogin())).build();
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -69,8 +64,8 @@ public class UserResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/user")
-    public @ResponseBody ResponseEntity getUser(@RequestParam("login") String login)  {
+    @GetMapping("/users/{login}")
+    public @ResponseBody ResponseEntity getUser(@PathVariable String login)  {
         if (null != userService.getUserByLogin(login)) {
             return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
         }
@@ -101,8 +96,4 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
-    @InitBinder("user")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(userValidator);
-    }
 }
