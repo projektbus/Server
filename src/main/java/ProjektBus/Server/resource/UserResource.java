@@ -2,7 +2,7 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.model.UserCreateRequestValidator;
+import ProjektBus.Server.validation.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
@@ -28,14 +28,14 @@ public class UserResource {
     private EmailSenderService emailSenderService;
 
     @Autowired
-    private ConfirmationTokenService confirmationTokenService;
+    private UserValidator userValidator;
 
     @Autowired
-    private UserCreateRequestValidator userCreateRequestValidator;
+    private ConfirmationTokenService confirmationTokenService;
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/user")
-    public ResponseEntity saveUser(@RequestBody @Valid User user) throws URISyntaxException {
-
+    public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
         userService.registerUser(user);
@@ -47,11 +47,7 @@ public class UserResource {
         return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/user?login=" + user.getLogin())).build();
     }
 
-    @InitBinder("userCreateRequest")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(userCreateRequestValidator);
-    }
-
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/confirm-account")
     public ResponseEntity confirmAccount(@RequestParam("tokenCode") String confirmationToken) {
         ConfirmationToken token = confirmationTokenService.getByTokenCode(confirmationToken);
@@ -59,7 +55,7 @@ public class UserResource {
         if(token != null) {
             User user = userService.getUserById(token.getUserId());
             if(user.isEnabled()) {
-                return new ResponseEntity("ACCOUNT ALREADY CONFIRMED", HttpStatus.CONFLICT);
+                return new ResponseEntity("Account already confirmed", HttpStatus.CONFLICT);
             }
             else {
                 user.setEnabled(true);
@@ -72,6 +68,7 @@ public class UserResource {
 
     }
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/user")
     public @ResponseBody ResponseEntity getUser(@RequestParam("login") String login)  {
         if (null != userService.getUserByLogin(login)) {
@@ -81,11 +78,12 @@ public class UserResource {
             return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
         }
 
     }
 
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/users")
     public @ResponseBody ResponseEntity getUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
@@ -103,4 +101,8 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
+    @InitBinder("user")
+    public void setupBinder(WebDataBinder binder) {
+        binder.addValidators(userValidator);
+    }
 }
