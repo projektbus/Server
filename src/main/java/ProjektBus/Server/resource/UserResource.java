@@ -2,16 +2,15 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.validation.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ProjektUtils;
+import ProjektBus.Server.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,13 +27,10 @@ public class UserResource {
     private EmailSenderService emailSenderService;
 
     @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/user")
+    @PostMapping("/users")
     public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
@@ -44,7 +40,7 @@ public class UserResource {
         confirmationTokenService.save(confirmationToken);
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
-        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/user?login=" + user.getLogin())).build();
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users?login=" + user.getLogin())).build();
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -52,7 +48,7 @@ public class UserResource {
     public ResponseEntity confirmAccount(@RequestParam("tokenCode") String confirmationToken) {
         ConfirmationToken token = confirmationTokenService.getByTokenCode(confirmationToken);
 
-        if(token != null) {
+        if (token != null) {
             User user = userService.getUserById(token.getUserId());
             if(user.isEnabled()) {
                 return new ResponseEntity("Account already confirmed", HttpStatus.CONFLICT);
@@ -62,19 +58,17 @@ public class UserResource {
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
-        }
-        else
+        } else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/user")
-    public @ResponseBody ResponseEntity getUser(@RequestParam("login") String login)  {
+    @GetMapping("/users/{login}")
+    public @ResponseBody ResponseEntity getUser(@PathVariable String login)  {
         if (null != userService.getUserByLogin(login)) {
             return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
-        }
-        else if (null != userService.getUserByEmail(login)) {
+        } else if (null != userService.getUserByEmail(login)) {
             return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
         }
         else {
@@ -85,10 +79,37 @@ public class UserResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/users")
-    public @ResponseBody ResponseEntity getUsers() {
+    public @ResponseBody
+    ResponseEntity getUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
 
     }
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("/login")
+    public ResponseEntity postLogin(@RequestParam("login") String login, @RequestParam("password") String password) {
+
+        if (null != userService.getUserByLogin(login) || null != userService.getUserByEmail(login)) {
+            User userByLogin = userService.getUserByLogin(login);
+            User userByMail = userService.getUserByEmail(login);
+            String passwordEncode = ProjektUtils.passwordEncode(password);
+
+            if (userByLogin != null) {
+                if (userByLogin.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
+                } else
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+            } else if (userByMail != null) {
+                if (userByMail.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
+                } else
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
+        } else
+            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
+    }
+
 
     private void sendEmailWithConfirmationTokenToUser(User user, ConfirmationToken confirmationToken) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -101,8 +122,4 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
-    @InitBinder("user")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(userValidator);
-    }
 }
