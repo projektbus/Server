@@ -17,4 +17,4 @@ public interface UserService {
     User getUserByEmail(String email);
     List<User> getAllUsers();
 >>>>>>> 36cbaeeca4e56fb2e527492bac37b9e232c9cd7a
-}
+}git
