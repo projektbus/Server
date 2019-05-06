@@ -1,12 +1,13 @@
 package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
+import ProjektBus.Server.model.ResetToken;
 import ProjektBus.Server.model.User;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
+import ProjektBus.Server.service.ResetTokenService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ProjektUtils;
-import ProjektBus.Server.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ import java.net.URISyntaxException;
 
 @RestController
 public class UserResource {
+
+    @Autowired
+    private ResetTokenService resetTokenService;
 
     @Autowired
     private UserService userService;
@@ -38,7 +42,7 @@ public class UserResource {
 
         ConfirmationToken confirmationToken = new ConfirmationToken(user.getId());
         confirmationTokenService.save(confirmationToken);
-        sendEmailWithConfirmationTokenToUser(user, confirmationToken);
+            sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
         return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users?login=" + user.getLogin())).build();
     }
@@ -121,5 +125,33 @@ public class UserResource {
 
         emailSenderService.sendEmail(mailMessage);
     }
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("/login")
+    public void ForgotPassword(String userEmail) {
 
+        User user = userService.getUserByEmail(userEmail);
+
+        if (user!=null) {
+            ResetToken resetToken = new ResetToken(user.getId());
+            resetTokenService.save(resetToken);
+            SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
+            passwordResetEmail.setFrom("support@demo.com");
+            passwordResetEmail.setTo(user.getEmail());
+            passwordResetEmail.setSubject("Password Reset Request");
+            passwordResetEmail.setText("To reset your password, click the link below:\n"
+                    + "https://peaceful-sierra-14544.herokuapp.com/remind-passsword?tokenCode=" + resetToken.getTokenCode());
+
+            emailService.sendEmail(passwordResetEmail);
+        }
+    }
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("/reset-password")
+    public void setNewPassword(@RequestParam("tokenCode") String resettoken, String newpassword) {
+        ResetToken token = resetTokenService.getByTokenCode(resettoken);
+        User user = userService.getUserById(token.getUserId());
+        String passwordEncode = ProjektUtils.passwordEncode(newpassword);
+        user.setPassword(passwordEncode);
+
+    }
 }
+
