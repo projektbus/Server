@@ -1,5 +1,13 @@
 server:
     port: 8110
+#    ssl:
+#        enabled: true
+#        key-store: classpath:keystore/projektbus.jks
+#        key-store-password: 'projekt'
+#        key-password: 'projekt'
+#        keyAlias: projektbus
+#        key-store-type: jks
+
 spring:
     application:
         name: ProjektBus-Server
