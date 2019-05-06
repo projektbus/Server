@@ -2,11 +2,11 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.validation.UserValidator;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ProjektUtils;
+import ProjektBus.Server.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,32 +52,29 @@ public class UserResource {
     public ResponseEntity confirmAccount(@RequestParam("tokenCode") String confirmationToken) {
         ConfirmationToken token = confirmationTokenService.getByTokenCode(confirmationToken);
 
-        if(token != null) {
+        if (token != null) {
             User user = userService.getUserById(token.getUserId());
-            if(user.isEnabled()) {
+            if (user.isEnabled()) {
                 return new ResponseEntity("ACCOUNT ALREADY CONFIRMED", HttpStatus.CONFLICT);
-            }
-            else {
+            } else {
                 user.setEnabled(true);
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
-        }
-        else
+        } else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/user")
-    public @ResponseBody ResponseEntity getUser(@RequestParam("login") String login)  {
+    public @ResponseBody
+    ResponseEntity getUser(@RequestParam("login") String login) {
         if (null != userService.getUserByLogin(login)) {
             return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
-        }
-        else if (null != userService.getUserByEmail(login)) {
+        } else if (null != userService.getUserByEmail(login)) {
             return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.NOT_FOUND);
         }
 
@@ -85,35 +82,35 @@ public class UserResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/users")
-    public @ResponseBody ResponseEntity getUsers() {
+    public @ResponseBody
+    ResponseEntity getUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
 
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/login")
-    public @ResponseBody ResponseEntity getLogin(@RequestParam("login") String login,@RequestParam("password") String password) {
+    public ResponseEntity postLogin(@RequestParam("login") String login, @RequestParam("password") String password) {
 
-        if (null != userService.getUserByLogin(login)) {
-            User userLogin = userService.getUserByLogin(login);
-            User userMail = userService.getUserByEmail(login);
+        if (null != userService.getUserByLogin(login) || null != userService.getUserByEmail(login)) {
+            User userByLogin = userService.getUserByLogin(login);
+            User userByMail = userService.getUserByEmail(login);
             String passwordEncode = ProjektUtils.passwordEncode(password);
 
-            if (userLogin != null) {
-                if (userLogin.getPassword().equals(passwordEncode)) {
-                    return new ResponseEntity("USER LOGGED SUCCESSFULLY", HttpStatus.OK);
+            if (userByLogin != null) {
+                if (userByLogin.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
                 } else
-                    return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
-            } else if (userMail != null) {
-                if (userMail.getPassword().equals(passwordEncode)) {
-                    return new ResponseEntity("USER LOGGED SUCCESSFULLY", HttpStatus.OK);
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+            } else if (userByMail != null) {
+                if (userByMail.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
                 } else
-                    return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
-        }
-        else
-            return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
+        } else
+            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
     }
 
 
