@@ -49,7 +49,8 @@ public class UserResource {
     public @ResponseBody ResponseEntity updatePassword(@PathVariable("login") String login,@RequestParam("password")String password, @RequestParam("new password")String newpassword){
         if (null != userRepository.findByLogin(login)) {
             if(userRepository.findByLogin(login).getPassword()==password){
-                userService.updatePassword(userRepository.findByLogin(login),newpassword);
+                String passwordEncode = ProjektUtils.passwordEncode(newpassword);
+                userService.updatePassword(userRepository.findByLogin(login),passwordEncode);
                 return new ResponseEntity(HttpStatus.OK);
             }
             else{
