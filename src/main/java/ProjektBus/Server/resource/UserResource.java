@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,13 +27,10 @@ public class UserResource {
     private EmailSenderService emailSenderService;
 
     @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/user")
+    @PostMapping("/users")
     public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);
@@ -44,7 +40,7 @@ public class UserResource {
         confirmationTokenService.save(confirmationToken);
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
-        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/user?login=" + user.getLogin())).build();
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users?login=" + user.getLogin())).build();
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -54,9 +50,10 @@ public class UserResource {
 
         if (token != null) {
             User user = userService.getUserById(token.getUserId());
-            if (user.isEnabled()) {
-                return new ResponseEntity("ACCOUNT ALREADY CONFIRMED", HttpStatus.CONFLICT);
-            } else {
+            if(user.isEnabled()) {
+                return new ResponseEntity("Account already confirmed", HttpStatus.CONFLICT);
+            }
+            else {
                 user.setEnabled(true);
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
@@ -67,15 +64,15 @@ public class UserResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/user")
-    public @ResponseBody
-    ResponseEntity getUser(@RequestParam("login") String login) {
+    @GetMapping("/users/{login}")
+    public @ResponseBody ResponseEntity getUser(@PathVariable String login)  {
         if (null != userService.getUserByLogin(login)) {
             return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
         } else if (null != userService.getUserByEmail(login)) {
             return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
-        } else {
-            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.NOT_FOUND);
+        }
+        else {
+            return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
         }
 
     }
@@ -125,8 +122,4 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
-    @InitBinder("user")
-    public void setupBinder(WebDataBinder binder) {
-        binder.addValidators(userValidator);
-    }
 }
