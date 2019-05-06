@@ -1,12 +1,22 @@
 package ProjektBus.Server.resource;
 
+import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.repository.UserRepository;
+import ProjektBus.Server.service.ConfirmationTokenService;
+import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
+import ProjektBus.Server.utils.ProjektUtils;
+import ProjektBus.Server.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 
 
 @RestController
