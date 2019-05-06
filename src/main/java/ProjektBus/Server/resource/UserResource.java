@@ -123,4 +123,33 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
+    @PutMapping("/users/{login}")
+    public @ResponseBody ResponseEntity updatePassword(@PathVariable("login") String login,@RequestParam("password")String password, @RequestParam("new password")String newpassword){
+        if (null != userService.getUserByLogin(login)) {
+            if(userService.getUserByLogin(login).getPassword()==password){
+                String passwordEncode = ProjektUtils.passwordEncode(newpassword);
+                userService.updatePassword(userService.getUserByLogin(login),passwordEncode);
+                return new ResponseEntity(HttpStatus.OK);
+            }
+            else{
+                return new ResponseEntity("BAD PASSWORD", HttpStatus.BAD_REQUEST);
+            }
+        }
+        else
+        {
+            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity deleteUser(@RequestParam("login") String login) {
+        if (null != userService.getUserByLogin(login)) {
+            userService.deleteUser(userService.getUserByLogin(login));
+            return new ResponseEntity(HttpStatus.OK);
+        } else {
+            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 }
