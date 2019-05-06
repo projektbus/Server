@@ -4,16 +4,13 @@ import ProjektBus.Server.service.*;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-<<<<<<< HEAD
 import org.springframework.context.annotation.Primary;
-=======
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.Properties;
->>>>>>> 36cbaeeca4e56fb2e527492bac37b9e232c9cd7a
 
 @Configuration
 public class AppConfig {
