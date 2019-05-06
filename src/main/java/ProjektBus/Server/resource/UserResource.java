@@ -141,7 +141,7 @@ public class UserResource {
             passwordResetEmail.setText("To reset your password, click the link below:\n"
                     + "https://peaceful-sierra-14544.herokuapp.com/remind-passsword?tokenCode=" + resetToken.getTokenCode());
 
-            emailService.sendEmail(passwordResetEmail);
+            emailSenderService.sendEmail(passwordResetEmail);
         }
     }
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -154,4 +154,5 @@ public class UserResource {
 
     }
 }
+
 
