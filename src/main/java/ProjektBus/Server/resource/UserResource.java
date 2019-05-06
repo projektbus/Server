@@ -6,6 +6,7 @@ import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ProjektUtils;
+import ProjektBus.Server.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class UserResource {
     public ResponseEntity confirmAccount(@RequestParam("tokenCode") String confirmationToken) {
         ConfirmationToken token = confirmationTokenService.getByTokenCode(confirmationToken);
 
-        if(token != null) {
+        if (token != null) {
             User user = userService.getUserById(token.getUserId());
             if(user.isEnabled()) {
                 return new ResponseEntity("Account already confirmed", HttpStatus.CONFLICT);
@@ -57,8 +58,7 @@ public class UserResource {
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
-        }
-        else
+        } else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
     }
@@ -68,8 +68,7 @@ public class UserResource {
     public @ResponseBody ResponseEntity getUser(@PathVariable String login)  {
         if (null != userService.getUserByLogin(login)) {
             return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
-        }
-        else if (null != userService.getUserByEmail(login)) {
+        } else if (null != userService.getUserByEmail(login)) {
             return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
         }
         else {
@@ -80,10 +79,37 @@ public class UserResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/users")
-    public @ResponseBody ResponseEntity getUsers() {
+    public @ResponseBody
+    ResponseEntity getUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
 
     }
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("/login")
+    public ResponseEntity postLogin(@RequestParam("login") String login, @RequestParam("password") String password) {
+
+        if (null != userService.getUserByLogin(login) || null != userService.getUserByEmail(login)) {
+            User userByLogin = userService.getUserByLogin(login);
+            User userByMail = userService.getUserByEmail(login);
+            String passwordEncode = ProjektUtils.passwordEncode(password);
+
+            if (userByLogin != null) {
+                if (userByLogin.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
+                } else
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+            } else if (userByMail != null) {
+                if (userByMail.getPassword().equals(passwordEncode)) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
+                } else
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
+        } else
+            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
+    }
+
 
     private void sendEmailWithConfirmationTokenToUser(User user, ConfirmationToken confirmationToken) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
