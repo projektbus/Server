@@ -22,7 +22,7 @@ public class BusStopResource {
     public ResponseEntity saveBusStop(@Valid @RequestBody BusStop busStop) throws URISyntaxException {
         busStopService.addBusStop(busStop);
 
-        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/bus-stops?name=" + busStop.getName())).build();
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/bus-stops/" + busStop.getName())).build();
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
