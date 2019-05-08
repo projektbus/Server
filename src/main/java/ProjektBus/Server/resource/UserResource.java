@@ -3,6 +3,7 @@ package ProjektBus.Server.resource;
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.ResetToken;
 import ProjektBus.Server.model.User;
+import ProjektBus.Server.model.template.LoginTemplate;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.ResetTokenService;
@@ -44,7 +45,7 @@ public class UserResource {
         confirmationTokenService.save(confirmationToken);
             sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
-        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users?login=" + user.getLogin())).build();
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users/" + user.getLogin())).build();
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -91,27 +92,24 @@ public class UserResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/login")
-    public ResponseEntity postLogin(@RequestParam("login") String login, @RequestParam("password") String password) {
+    public ResponseEntity postLogin(@RequestBody LoginTemplate loginTemplate) {
 
-        if (null != userService.getUserByLogin(login) || null != userService.getUserByEmail(login)) {
-            User userByLogin = userService.getUserByLogin(login);
-            User userByMail = userService.getUserByEmail(login);
-            String passwordEncode = ProjektUtils.passwordEncode(password);
-
+        if (null != userService.getUserByLogin(loginTemplate.getLogin()) || null != userService.getUserByEmail(loginTemplate.getLogin())) {
+            User userByLogin = userService.getUserByLogin(loginTemplate.getLogin());
+            User userByMail = userService.getUserByEmail(loginTemplate.getLogin());
             if (userByLogin != null) {
-                if (userByLogin.getPassword().equals(passwordEncode)) {
+                if (ProjektUtils.passwordVerify(userByLogin.getPassword(),loginTemplate.getPassword())) {
                     return new ResponseEntity("User logged successfully", HttpStatus.OK);
                 } else
                     return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
             } else if (userByMail != null) {
-                if (userByMail.getPassword().equals(passwordEncode)) {
+                if (ProjektUtils.passwordVerify(userByMail.getPassword(),loginTemplate.getPassword())) {
                     return new ResponseEntity("User logged successfully", HttpStatus.OK);
                 } else
                     return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
-        } else
-            return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
     }
 
 
