@@ -14,6 +14,7 @@ public class ResetToken {
     private String tokenCode;
     private Date createdDate;
     private String userId;
+    private boolean used;
 
     public ResetToken(String userId) {
         this.userId = userId;

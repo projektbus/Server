@@ -32,10 +32,12 @@ public class AppConfig {
     public ConfirmationTokenService getConfirmationTokenService() {
         return new ConfirmationTokenServiceImpl();
     }
+
     @Bean
     public ResetTokenService getResetTokenService() {
         return new ResetTokenServiceImpl();
     }
+
     @Bean(name="mailSender")
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
