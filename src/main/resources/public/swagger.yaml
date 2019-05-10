@@ -1,35 +1,68 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: Projekt Bus
-  description: Application made as university project (Java Spring Rest MongoDB)
+  title: "Projekt Bus"
+  description: "Application made as university project (Java Spring Rest MongoDB)"
 servers:
   - url: http://localhost:8110
+    description: Local
+  - url: https://peaceful-sierra-14544.herokuapp.com
+    description: Online
+tags:
+  - name: "users"
+    description: "Everything about users"
+
 paths:
-  /user:
+  /users:
     post:
-      tags: [user]
-      description: Create new User
-      operationId: addUser
+      tags:
+        - "users"
+      summary: "Create new User"
+      description: ""
+      operationId: "addUser"
       requestBody:
-        description: New user informations
+        description: "User information that needs to be added to DB"
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
       responses:
-        '200':
-          description: User created
+        201:
+          description: "User created"
           headers:
             Location:
               schema:
-                type: string
-              description: URL adress of created User
+                type: "string"
+              description: "URL adress of created User"
+        405:
+          description: "BAD_REQUEST"
+    get:
+      tags:
+        - "users"
+      summary: "Create new User"
+      description: ""
+      operationId: "getUsersList"
+      responses:
+        200:
+          description: "successful operation"
+          headers:
+            Location:
+              schema:
+                type: "array"
+              description: "Useres list"
+
+
+        405:
+          description: "BAD_REQUEST"
+
+
+
 
 components:
   schemas:
     User:
+      type: "object"
       required:
         - id
         - login
