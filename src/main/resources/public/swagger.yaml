@@ -1,85 +1,149 @@
-openapi: "3.0.0"
+swagger: "2.0"
 info:
-  version: 1.0.0
-  title: "Projekt Bus"
   description: "Application made as university project (Java Spring Rest MongoDB)"
-servers:
-  - url: http://localhost:8110
-    description: Local
-  - url: https://peaceful-sierra-14544.herokuapp.com
-    description: Online
+  version: "1.0.0"
+  title: "Projekt Bus"
 tags:
-  - name: "users"
-    description: "Everything about users"
+  - name: "user"
+    description: "Everything about Useres"
+  - name: "login"
+    description: "Evrything about login methods"
+schemes:
+  - "http"
 
 paths:
-  /users:
+  /useres:
     post:
       tags:
-        - "users"
-      summary: "Create new User"
+        - "user"
+      summary: "Add a new pet to the store"
       description: ""
       operationId: "addUser"
-      requestBody:
-        description: "User information that needs to be added to DB"
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "User object that needs to be added to the DB"
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
-        201:
+        200:
           description: "User created"
           headers:
             Location:
-              schema:
-                type: "string"
+              type: "string"
               description: "URL adress of created User"
+
         405:
           description: "BAD_REQUEST"
     get:
       tags:
-        - "users"
-      summary: "Create new User"
+        - "user"
+      summary: "Get all useres list"
       description: ""
-      operationId: "getUsersList"
       responses:
         200:
-          description: "successful operation"
-          headers:
-            Location:
-              schema:
-                type: "array"
-              description: "Useres list"
-
-
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
         405:
-          description: "BAD_REQUEST"
+          description: "BAD_REQUST"
+
+  /users/{login}:
+    get:
+      tags:
+        - "user"
+      summary: "Get user by user login"
+      description: ""
+      operationId: "getUserByLogin"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "login"
+          in: "path"
+          description: "The name that needs to be fetched."
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: "User does not exist"
 
 
 
 
-components:
-  schemas:
-    User:
-      type: "object"
-      required:
-        - id
-        - login
-        - email
-        - password
-        - enabled
-      properties:
-        id:
-          type: string
-          readOnly: true
-        login:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-          writeOnly: true
-        enabled:
-          type: boolean
-          readOnly: true
+  /login:
+    post:
+      tags:
+        - "login"
+      summary: "Logs user into server"
+      description: ""
+      operationId: "loginUser"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "User object that needs to be added to the DB"
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+
+      responses:
+        200:
+          description: "User logged successfully"
+        404:
+          description: "Wrong login || Wrong password"
+        405:
+          description: "BAD_REQUST"
+
+
+
+
+
+
+
+definitions:
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        readOnly: true
+      login:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      enabled:
+        type: "boolean"
+        readOnly: true
+  Login:
+    type: "object"
+    properties:
+      login:
+        type: "string"
+      password:
+        type: "string"
+
+
+
+
+
+
+
+
+
+
+
+
