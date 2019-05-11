@@ -34,6 +34,11 @@ public class AppConfig {
         return new ConfirmationTokenServiceImpl();
     }
 
+    @Bean
+    public SettingPasswordTokenService getSettingPasswordTokenService() {
+        return new SettingPasswordTokenServiceImpl();
+    }
+
     @Bean(name="mailSender")
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

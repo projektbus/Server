@@ -5,6 +5,7 @@ import ProjektBus.Server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
+
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -34,4 +35,5 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
 }
