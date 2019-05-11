@@ -10,12 +10,4 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-	//Bean filtrujący endpointy
-//	@Bean
-//	public FilterRegistrationBean filterRegistrationBean(){
-//		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-//		filterRegistrationBean.setFilter(new JwtFilter());
-//		filterRegistrationBean.setUrlPatterns(Collections.singletonList("/test/*"));
-//		return filterRegistrationBean;
-//	}
 }

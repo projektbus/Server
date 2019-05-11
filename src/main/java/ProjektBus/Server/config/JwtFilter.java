@@ -26,7 +26,7 @@
 //
 //    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 //        String authorizationHeader = request.getHeader("Authorization");
-//        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+//        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 //            throw new ServletException("Authorization header missing or wrong type");
 //        }
 //        UsernamePasswordAuthenticationToken authResult = getAuthenticationByToken(authorizationHeader);
@@ -37,13 +37,11 @@
 //    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) throws ServletException {
 //        Jws<Claims> claimsJws = null;
 //        try {
-//        claimsJws = Jwts.parser().setSigningKey("TbUL55^O|T<;UyT".getBytes())
+//            claimsJws = Jwts.parser().setSigningKey("TbUL55^O|T<;UyT".getBytes())
 //                    .parseClaimsJws(header.replace("Bearer ", ""));
-//        }
-//        catch (ExpiredJwtException ex){
+//        } catch (ExpiredJwtException ex) {
 //            throw new ServletException("Token expired");
-//        }
-//        catch (Exception ex){
+//        } catch (Exception ex) {
 //            throw new ServletException("Token wrong formatted");
 //        }
 //        String login = claimsJws.getBody().get("login").toString();
