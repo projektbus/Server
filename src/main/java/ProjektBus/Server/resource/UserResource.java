@@ -128,7 +128,7 @@ public class UserResource {
         if (null != userService.getUserByLogin(login)) {
             if(userService.getUserByLogin(login).getPassword()==password){
                 String passwordEncode = ProjektUtils.passwordEncode(newpassword);
-                userService.updatePassword(userService.getUserByLogin(login),passwordEncode);
+                userService.getUserByLogin(login).setPassword(passwordEncode);
                 return new ResponseEntity(HttpStatus.OK);
             }
             else{

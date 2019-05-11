@@ -41,10 +41,4 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    @Override
-    public User updatePassword(User user, String password) {
-        user.setPassword(password);
-        user=userRepository.save(user);
-        return user;
-    }
 }
