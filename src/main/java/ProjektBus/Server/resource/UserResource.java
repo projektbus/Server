@@ -121,19 +121,21 @@ public class UserResource {
 
     @PutMapping("/users/{login}")
     public @ResponseBody ResponseEntity updatePassword(@PathVariable("login") String login,@RequestParam("password")String password, @RequestParam("new password")String newpassword){
-        if (null != userService.getUserByLogin(login)) {
-            if(userService.getUserByLogin(login).getPassword()==password){
+        User user=userService.getUserByLogin(login);
+        if (null != user) {
+            if(ProjektUtils.passwordVerify(user.getPassword(),password)){
                 String passwordEncode = ProjektUtils.passwordEncode(newpassword);
-                userService.getUserByLogin(login).setPassword(passwordEncode);
+                user.setPassword(passwordEncode);
+                userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
             else{
-                return new ResponseEntity("BAD PASSWORD", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Wrong password", HttpStatus.BAD_REQUEST);
             }
         }
         else
         {
-            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("User does not exist", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -143,7 +145,7 @@ public class UserResource {
             userService.deleteUser(userService.getUserByLogin(login));
             return new ResponseEntity(HttpStatus.OK);
         } else {
-            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("User does not exist", HttpStatus.BAD_REQUEST);
         }
     }
 }
