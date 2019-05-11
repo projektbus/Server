@@ -5,7 +5,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.Properties;
@@ -34,8 +35,8 @@ public class AppConfig {
     }
 
     @Bean
-    public ResetTokenService getResetTokenService() {
-        return new ResetTokenServiceImpl();
+    public SettingPasswordTokenService getResetTokenService() {
+        return new SettingPasswordTokenServiceImpl();
     }
 
     @Bean(name="mailSender")

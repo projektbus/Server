@@ -8,18 +8,19 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class ResetToken {
+public class SettingPasswordToken {
+
     @Id
     private String tokenId;
     private String tokenCode;
-    private Date createdDate;
     private String userId;
-    private boolean used;
+    private boolean active;
 
-    public ResetToken(String userId) {
+    public SettingPasswordToken(String userId) {
         this.userId = userId;
-        createdDate = new Date();
+        this.active = true;
         tokenCode = UUID.randomUUID().toString();
     }
 
 }
+

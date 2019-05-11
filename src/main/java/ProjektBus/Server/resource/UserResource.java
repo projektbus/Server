@@ -1,14 +1,13 @@
 package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
-import ProjektBus.Server.model.ResetToken;
+import ProjektBus.Server.model.SettingPasswordToken;
 import ProjektBus.Server.model.User;
-import ProjektBus.Server.model.template.ForgotPasswordTemplate;
 import ProjektBus.Server.model.template.LoginTemplate;
-import ProjektBus.Server.model.template.RemindPasswordTemplate;
+import ProjektBus.Server.model.template.PasswordTemplate;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
-import ProjektBus.Server.service.ResetTokenService;
+import ProjektBus.Server.service.SettingPasswordTokenService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ProjektUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,6 @@ import java.net.URISyntaxException;
 public class UserResource {
 
     @Autowired
-    private ResetTokenService resetTokenService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -35,6 +31,9 @@ public class UserResource {
 
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
+
+    @Autowired
+    private SettingPasswordTokenService settingPasswordTokenService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/users")
@@ -126,44 +125,51 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/forgot-password")
-    public ResponseEntity forgotPassword(@RequestBody ForgotPasswordTemplate forgotPasswordTemplate) {
+    @PostMapping("/remind-password/{login}")
+    public ResponseEntity remindPassword(@PathVariable("login") String login) {
 
-        User user = userService.getUserByEmail(forgotPasswordTemplate.getEmail());
+        User user = userService.getUserByLogin(login) != null ? userService.getUserByLogin(login) :
+                userService.getUserByEmail(login);
 
-        if (user!=null) {
-            ResetToken resetToken = new ResetToken(user.getId());
-            resetTokenService.save(resetToken);
-            SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
-            passwordResetEmail.setFrom("support@demo.com");
-            passwordResetEmail.setTo(user.getEmail());
-            passwordResetEmail.setSubject("Password Remind Request");
-            passwordResetEmail.setText("To remind your password, click the link below:\n"
-                    + "https://peaceful-sierra-14544.herokuapp.com/remind-passsword?tokenCode=" + resetToken.getTokenCode());
-
-            emailSenderService.sendEmail(passwordResetEmail);
-        }
-        return new ResponseEntity("Mail was sended",HttpStatus.OK);
-    }
-    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/remind-password")
-    public ResponseEntity remindPassword(@RequestParam("tokenCode") String resetToken, @RequestBody RemindPasswordTemplate remindPasswordTemplate) {
-        ResetToken token = resetTokenService.getByTokenCode(resetToken);
-        if(token.isUsed()) {
-            return new ResponseEntity("Password already changed with this link", HttpStatus.CONFLICT);
+        if (user != null) {
+            SettingPasswordToken resetToken = new SettingPasswordToken(user.getId());
+            settingPasswordTokenService.save(resetToken);
+            sendEmailWithRemindPasswordToken(user, resetToken);
+            return new ResponseEntity("Mail was sent",HttpStatus.OK);
         }
         else {
-            if (remindPasswordTemplate.getPassword().equals(remindPasswordTemplate.getConfirmationPassword())) {
-                User user = userService.getUserById(token.getUserId());
-                String passwordEncode = ProjektUtils.passwordEncode(remindPasswordTemplate.getPassword());
-                user.setPassword(passwordEncode);
-                userService.registerUser(user);
-                token.setUsed(true);
-                resetTokenService.save(token);
-                return new ResponseEntity("Password changed successfully", HttpStatus.OK);
-            } else {
-                return new ResponseEntity("Password and confirmation password do not match.", HttpStatus.NOT_FOUND);
-            }
+            return new ResponseEntity("User not found",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private void sendEmailWithRemindPasswordToken(User user, SettingPasswordToken resetToken) {
+        SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
+        passwordResetEmail.setFrom("support@demo.com");
+        passwordResetEmail.setTo(user.getEmail());
+        passwordResetEmail.setSubject("Remind password");
+        passwordResetEmail.setText("To set new password, click the link below:\n"
+                + "https://peaceful-sierra-14544.herokuapp.com/remind-password?tokenCode=" + resetToken.getTokenCode());
+
+        emailSenderService.sendEmail(passwordResetEmail);
+    }
+
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("/remind-password")
+    public ResponseEntity remindPassword(@RequestParam("tokenCode") String resetToken, @Valid @RequestBody PasswordTemplate passwordTemplate) {
+        SettingPasswordToken token = settingPasswordTokenService.getByTokenCode(resetToken);
+
+        if(token.isActive()) {
+            User user = userService.getUserById(token.getUserId());
+            String passwordEncode = ProjektUtils.passwordEncode(passwordTemplate.getPassword());
+            user.setPassword(passwordEncode);
+            userService.registerUser(user);
+            token.setActive(false);
+            settingPasswordTokenService.save(token);
+            return new ResponseEntity("Password changed successfully", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity("Password already changed with this link", HttpStatus.CONFLICT);
         }
     }
 }
