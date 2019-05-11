@@ -89,20 +89,15 @@ public class UserResource {
     @PostMapping("/login")
     public ResponseEntity postLogin(@RequestBody LoginTemplate loginTemplate) {
 
-        if (null != userService.getUserByLogin(loginTemplate.getLogin()) || null != userService.getUserByEmail(loginTemplate.getLogin())) {
-            User userByLogin = userService.getUserByLogin(loginTemplate.getLogin());
-            User userByMail = userService.getUserByEmail(loginTemplate.getLogin());
-            if (userByLogin != null) {
-                if (ProjektUtils.passwordVerify(userByLogin.getPassword(),loginTemplate.getPassword())) {
-                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
-                } else
-                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
-            } else if (userByMail != null) {
-                if (ProjektUtils.passwordVerify(userByMail.getPassword(),loginTemplate.getPassword())) {
-                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
-                } else
-                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
-            }
+        User user = userService.getUserByLogin(loginTemplate.getLogin());
+
+        if (user == null) user = userService.getUserByEmail(loginTemplate.getLogin());
+
+        if (user != null) {
+            if (ProjektUtils.passwordVerify(user.getPassword(), loginTemplate.getPassword())) {
+                return new ResponseEntity("User logged successfully", HttpStatus.OK);
+            } else
+                return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
     }
