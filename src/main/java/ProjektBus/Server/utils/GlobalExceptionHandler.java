@@ -42,10 +42,10 @@ public class GlobalExceptionHandler{
         return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ApplicationError handleAllExceptions(Exception ex, WebRequest request){
-        logger.error(ex.getMessage());
-        return new ApplicationError(HttpStatus.INTERNAL_SERVER_ERROR, "");
-    }
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    protected ApplicationError handleAllExceptions(Exception ex, WebRequest request){
+//        logger.error(ex.getMessage());
+//        return new ApplicationError(HttpStatus.INTERNAL_SERVER_ERROR, "");
+//    }
 }

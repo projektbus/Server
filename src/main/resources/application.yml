@@ -1,8 +1,13 @@
 server:
     port: 8110
-#    session:
-#        cookie:
-#            name: UISESSION
+#    ssl:
+#        enabled: true
+#        key-store: classpath:keystore/projektbus.jks
+#        key-store-password: 'projekt'
+#        key-password: 'projekt'
+#        keyAlias: projektbus
+#        key-store-type: jks
+
 spring:
     application:
         name: ProjektBus-Server
@@ -10,16 +15,3 @@ spring:
         mongodb:
             uri: mongodb+srv://test:y52InmyjQkw7RnDe@projektbus-1sqzc.gcp.mongodb.net/test?retryWrites=true
             database: ProjektBus
-#    thymeleaf:
-#        cache: false
-#security:
-#    basic:
-#        enabled: false
-#    oauth2:
-#        client:
-#            clientId: SampleClientId
-#            clientSecret: secret
-#            accessTokenUri: http://localhost:8220/auth/oauth/token
-#            userAuthorizationUri: http://localhost:8220/auth/oauth/authorize
-#        resource:
-#            userInfoUri: http://localhost:8220/auth/user/me
