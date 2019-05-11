@@ -2,6 +2,7 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.User;
+import ProjektBus.Server.model.template.LoginTemplate;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.UserService;
@@ -39,7 +40,7 @@ public class UserResource {
         confirmationTokenService.save(confirmationToken);
         sendEmailWithConfirmationTokenToUser(user, confirmationToken);
 
-        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users?login=" + user.getLogin())).build();
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/users/" + user.getLogin())).build();
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -47,7 +48,7 @@ public class UserResource {
     public ResponseEntity confirmAccount(@RequestParam("tokenCode") String confirmationToken) {
         ConfirmationToken token = confirmationTokenService.getByTokenCode(confirmationToken);
 
-        if(token != null) {
+        if (token != null) {
             User user = userService.getUserById(token.getUserId());
             if(user.isEnabled()) {
                 return new ResponseEntity("Account already confirmed", HttpStatus.CONFLICT);
@@ -57,8 +58,7 @@ public class UserResource {
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
-        }
-        else
+        } else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
     }
@@ -68,8 +68,7 @@ public class UserResource {
     public @ResponseBody ResponseEntity getUser(@PathVariable String login)  {
         if (null != userService.getUserByLogin(login)) {
             return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
-        }
-        else if (null != userService.getUserByEmail(login)) {
+        } else if (null != userService.getUserByEmail(login)) {
             return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
         }
         else {
@@ -80,35 +79,32 @@ public class UserResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/users")
-    public @ResponseBody ResponseEntity getUsers() {
+    public @ResponseBody
+    ResponseEntity getUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
 
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/login")
-    public @ResponseBody ResponseEntity getLogin(@RequestParam("login") String login,@RequestParam("password") String password) {
+    public ResponseEntity postLogin(@RequestBody LoginTemplate loginTemplate) {
 
-        if (null != userService.getUserByLogin(login)) {
-            User userLogin = userService.getUserByLogin(login);
-            User userMail = userService.getUserByEmail(login);
-            String passwordEncode = ProjektUtils.passwordEncode(password);
-
-            if (userLogin != null) {
-                if (userLogin.getPassword().equals(passwordEncode)) {
-                    return new ResponseEntity("USER LOGGED SUCCESSFULLY", HttpStatus.OK);
+        if (null != userService.getUserByLogin(loginTemplate.getLogin()) || null != userService.getUserByEmail(loginTemplate.getLogin())) {
+            User userByLogin = userService.getUserByLogin(loginTemplate.getLogin());
+            User userByMail = userService.getUserByEmail(loginTemplate.getLogin());
+            if (userByLogin != null) {
+                if (ProjektUtils.passwordVerify(userByLogin.getPassword(),loginTemplate.getPassword())) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
                 } else
-                    return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
-            } else if (userMail != null) {
-                if (userMail.getPassword().equals(passwordEncode)) {
-                    return new ResponseEntity("USER LOGGED SUCCESSFULLY", HttpStatus.OK);
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+            } else if (userByMail != null) {
+                if (ProjektUtils.passwordVerify(userByMail.getPassword(),loginTemplate.getPassword())) {
+                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
                 } else
-                    return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
         }
-        else
-            return new ResponseEntity("WRONG DATA", HttpStatus.NOT_FOUND);
+        return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
     }
 
 
@@ -121,35 +117,6 @@ public class UserResource {
                 + "https://peaceful-sierra-14544.herokuapp.com/confirm-account?tokenCode=" + confirmationToken.getTokenCode());
 
         emailSenderService.sendEmail(mailMessage);
-    }
-
-    @PutMapping("/users/{login}")
-    public @ResponseBody ResponseEntity updatePassword(@PathVariable("login") String login,@RequestParam("password")String password, @RequestParam("new password")String newpassword){
-        if (null != userService.getUserByLogin(login)) {
-            if(userService.getUserByLogin(login).getPassword()==password){
-                String passwordEncode = ProjektUtils.passwordEncode(newpassword);
-                userService.getUserByLogin(login).setPassword(passwordEncode);
-                return new ResponseEntity(HttpStatus.OK);
-            }
-            else{
-                return new ResponseEntity("BAD PASSWORD", HttpStatus.BAD_REQUEST);
-            }
-        }
-        else
-        {
-            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @DeleteMapping("/user")
-    public ResponseEntity deleteUser(@RequestParam("login") String login) {
-        if (null != userService.getUserByLogin(login)) {
-            userService.deleteUser(userService.getUserByLogin(login));
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity("USER DOES NOT EXIST", HttpStatus.BAD_REQUEST);
-        }
-
     }
 
 }
