@@ -100,22 +100,17 @@ public class UserResource {
         emailSenderService.sendEmail(mailMessage);
     }
 
-    @PostMapping("/loginn")
-    public String test(@RequestBody User user){
+    @PostMapping(value = "/login")
+    public ResponseEntity login(@RequestBody User user){
         long currentTimeMillis = System.currentTimeMillis();
-        //Token
-        return Jwts.builder()
-                //użytkownik lub email dodać
-//                .setSubject(user.getLogin())
-                //rola
+        String token = Jwts.builder()
                 .claim("login", user.getLogin())
                 .setIssuedAt(new Date(currentTimeMillis))
-                //Czas życia tokenu - 20 minut
-                .setExpiration(new Date(currentTimeMillis + 200))
-//                .setExpiration(new Date(currentTimeMillis + 7200000))
-                //tu jargon dać pewnie
+                .setExpiration(new Date(currentTimeMillis + 7200000))
                 .signWith(SignatureAlgorithm.HS512, "TbUL55^O|T<;UyT".getBytes())
                 .compact();
+
+        return new ResponseEntity(token, HttpStatus.OK);
     }
 
     @InitBinder("user")
