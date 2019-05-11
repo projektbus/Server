@@ -1,6 +1,7 @@
 package ProjektBus.Server.config;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,20 +34,21 @@ public class JwtFilter extends BasicAuthenticationFilter {
         chain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) {
-//        try {
-        Jws<Claims> claimsJws = Jwts.parser().setSigningKey("TbUL55^O|T<;UyT".getBytes())
+    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) throws ServletException {
+        Jws<Claims> claimsJws = null;
+        try {
+        claimsJws = Jwts.parser().setSigningKey("TbUL55^O|T<;UyT".getBytes())
                     .parseClaimsJws(header.replace("Bearer ", ""));
-//        }
-//        catch (ExpiredJwtException ex){
-//            throw new ServletException("Token expired");
-//        }
-//        catch (Exception ex){
-//            throw new ServletException("Token wrong formatted");
-//        }
-        String login = claimsJws.getBody().get("sub").toString();
+        }
+        catch (ExpiredJwtException ex){
+            throw new ServletException("Token expired");
+        }
+        catch (Exception ex){
+            throw new ServletException("Token wrong formatted");
+        }
+        String login = claimsJws.getBody().get("login").toString();
         Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.singleton(new SimpleGrantedAuthority("user"));
 
-        return new UsernamePasswordAuthenticationToken(login, null, simpleGrantedAuthorities);
+        return new UsernamePasswordAuthenticationToken(login, "", simpleGrantedAuthorities);
     }
 }
