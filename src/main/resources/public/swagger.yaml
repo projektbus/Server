@@ -4,49 +4,182 @@ info:
   title: Projekt Bus
   description: Application made as university project (Java Spring Rest MongoDB)
 servers:
-  - url: http://localhost:8110
+  - url: https://peaceful-sierra-14544.herokuapp.com/
 paths:
-  /user:
+  /users:
+    get:
+      tags:
+        - users
+      summary: |
+        Get list of users
+      operationId: get-users
+      responses:
+        200:
+          description: Returns Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
     post:
-      tags: [user]
-      description: Create new User
+      tags:
+        - users
+      summary: Add new User
       operationId: addUser
       requestBody:
-        description: New user informations
-        required: true
+        description: User object
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/NewUser'
       responses:
-        '200':
+        201:
           description: User created
           headers:
             Location:
               schema:
-                type: string
+                type: "string"
               description: URL adress of created User
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "BAD_REQUEST",
+                "errors": [
+                  "password: Password must contain special characters",
+                  "email: Size must be between 5 and 32 letters",
+                  "email: Wrong email",
+                  "password: Size must be between 5 and 32 letters",
+                  "login: Size must be between 5 and 32 letters",
+                  "password: Password must contain number"
+                ]
+              }
+  /users/{login}:
+    get:
+      tags:
+        - users
+      summary: Get user by user login or email
+      operationId: getUserByLogin
+      parameters:
+        - name: login
+          in: path
+          description: User login or email.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          description: User not found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+              example: User does not exist
+
+  /login:
+    post:
+      tags:
+        - login
+      summary: Login to application
+      operationId: login
+      requestBody:
+        description: Login field may contain user login or email
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginTemplate'
+      responses:
+        200:
+          description: User logged successfully
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              example: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYWFsYSIsImlhdCI6MTU1NzA2NjE3OSwiZXhwIjoxNTU3MDczMzc5fQ.uCh5N4xNapNG9hLQDMTi_7BcFii0bb0Uq4Lsm7dTz8uEFMnDZQ075jK60s4y1D_yaT-gp34nno-8Nh78QpKYGQ"
+        404:
+          description: Wrong credentionals
+          content:
+            text/plain:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/WrongPassword'
+                  - $ref: '#/components/schemas/WrongLogin'
+              example: Wrong password
 
 components:
   schemas:
     User:
-      required:
-        - id
-        - login
-        - email
-        - password
-        - enabled
       properties:
         id:
-          type: string
-          readOnly: true
+          type: integer
+          format: int64
+        enabled:
+          type: boolean
         login:
           type: string
         email:
           type: string
         password:
           type: string
-          writeOnly: true
-        enabled:
-          type: boolean
-          readOnly: true
+
+    NewUser:
+      required:
+        - login
+        - email
+        - password
+      properties:
+        login:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    LoginTemplate:
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+
+    ApplicationError:
+      properties:
+        status:
+          type: string
+        errors:
+          $ref: '#/components/schemas/ErrorList'
+
+    ErrorList:
+      type: array
+      items:
+        properties:
+          field:
+            type: string
+
+    WrongPassword:
+      properties:
+        message:
+          type: string
+
+    WrongLogin:
+      properties:
+        message:
+          type: string
+
+    UserNotFound:
+      properties:
+        message:
+          type: string
