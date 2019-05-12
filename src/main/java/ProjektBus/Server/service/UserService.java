@@ -1,8 +1,8 @@
 package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.User;
-
 import java.util.List;
+
 
 public interface UserService {
 
@@ -11,4 +11,5 @@ public interface UserService {
     User getUserByLogin(String login);
     User getUserByEmail(String email);
     List<User> getAllUsers();
+
 }
