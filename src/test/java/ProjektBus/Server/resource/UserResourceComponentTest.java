@@ -74,7 +74,7 @@ public class UserResourceComponentTest {
 
     @Test
     public void should_SaveUser() throws Exception {
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("{" +
                         "\"login\" : \"testLogin\"," +

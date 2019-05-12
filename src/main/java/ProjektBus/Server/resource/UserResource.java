@@ -39,7 +39,7 @@ public class UserResource {
     private SettingPasswordTokenService settingPasswordTokenService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PostMapping("/users")
+    @PostMapping("/register")
     public ResponseEntity saveUser(@Valid @RequestBody User user) throws URISyntaxException {
         String passwordEncode = ProjektUtils.passwordEncode(user.getPassword());
         user.setPassword(passwordEncode);

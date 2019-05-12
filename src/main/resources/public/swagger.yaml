@@ -22,11 +22,40 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-    post:
+  /users/{login}:
+    get:
       tags:
         - users
-      summary: Add new User
-      operationId: addUser
+      summary: Get user by user login or email
+      operationId: getUserByLogin
+      parameters:
+        - name: login
+          in: path
+          description: User login or email.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          description: User not found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+              example: User does not exist
+
+  /register:
+    post:
+      tags:
+        - register
+      summary: Register new User
+      operationId: registerUser
       requestBody:
         description: User object
         content:
@@ -58,33 +87,6 @@ paths:
                   "password: Password must contain number"
                 ]
               }
-  /users/{login}:
-    get:
-      tags:
-        - users
-      summary: Get user by user login or email
-      operationId: getUserByLogin
-      parameters:
-        - name: login
-          in: path
-          description: User login or email.
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: User response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        404:
-          description: User not found
-          content:
-            text/plain:
-              schema:
-                $ref: '#/components/schemas/UserNotFound'
-              example: User does not exist
 
   /login:
     post:
