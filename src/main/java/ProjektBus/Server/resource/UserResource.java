@@ -10,6 +10,8 @@ import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.SettingPasswordTokenService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ProjektUtils;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 @RestController
 public class UserResource {
@@ -93,25 +96,36 @@ public class UserResource {
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/login")
     public ResponseEntity postLogin(@RequestBody LoginTemplate loginTemplate) {
+            User user = userService.getUserByLogin(loginTemplate.getLogin());
 
-        if (null != userService.getUserByLogin(loginTemplate.getLogin()) || null != userService.getUserByEmail(loginTemplate.getLogin())) {
-            User userByLogin = userService.getUserByLogin(loginTemplate.getLogin());
-            User userByMail = userService.getUserByEmail(loginTemplate.getLogin());
-            if (userByLogin != null) {
-                if (ProjektUtils.passwordVerify(userByLogin.getPassword(), loginTemplate.getPassword())) {
-                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
-                } else
-                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
-            } else if (userByMail != null) {
-                if (ProjektUtils.passwordVerify(userByMail.getPassword(), loginTemplate.getPassword())) {
-                    return new ResponseEntity("User logged successfully", HttpStatus.OK);
+            if (user != null) {
+                if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
+                    return createToken(user);
                 } else
                     return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
             }
-        }
+
+            user = userService.getUserByEmail(loginTemplate.getLogin());
+            if (user != null) {
+                if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
+                    return createToken(user);
+                } else
+                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+            }
         return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
     }
 
+    private ResponseEntity createToken(User user) {
+        long currentTimeMillis = System.currentTimeMillis();
+        String token = Jwts.builder()
+                .claim("login", user.getLogin())
+                .setIssuedAt(new Date(currentTimeMillis))
+                .setExpiration(new Date(currentTimeMillis + 7200000))
+                .signWith(SignatureAlgorithm.HS512, "TbUL55^O|T<;UyT".getBytes())
+                .compact();
+
+        return new ResponseEntity(token, HttpStatus.OK);
+    }
 
     private void sendEmailWithConfirmationTokenToUser(User user, ConfirmationToken confirmationToken) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();

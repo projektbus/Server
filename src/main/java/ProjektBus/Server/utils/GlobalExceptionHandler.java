@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,10 +35,17 @@ public class GlobalExceptionHandler{
         return new ApplicationError(HttpStatus.BAD_REQUEST, errors);
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ApplicationError handleAllExceptions(Exception ex, WebRequest request){
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ApplicationError handleMissingServletRequestParameterException(MissingServletRequestParameterException ex, WebRequest request) {
         logger.error(ex.getMessage());
-        return new ApplicationError(HttpStatus.INTERNAL_SERVER_ERROR, "");
+        return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
+
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    protected ApplicationError handleAllExceptions(Exception ex, WebRequest request){
+//        logger.error(ex.getMessage());
+//        return new ApplicationError(HttpStatus.INTERNAL_SERVER_ERROR, "");
+//    }
 }
