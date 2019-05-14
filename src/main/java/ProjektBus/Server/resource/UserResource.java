@@ -5,6 +5,7 @@ import ProjektBus.Server.model.SettingPasswordToken;
 import ProjektBus.Server.model.User;
 import ProjektBus.Server.model.template.LoginTemplate;
 import ProjektBus.Server.model.template.PasswordTemplate;
+import ProjektBus.Server.model.template.UpdatePasswordTemplate;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.SettingPasswordTokenService;
@@ -90,7 +91,6 @@ public class UserResource {
     public @ResponseBody
     ResponseEntity getUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
-
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -182,6 +182,38 @@ public class UserResource {
             return new ResponseEntity("Password changed successfully", HttpStatus.OK);
         } else {
             return new ResponseEntity("Password already changed with this link", HttpStatus.CONFLICT);
+        }
+    }
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @PutMapping("/users/{login}")
+    public @ResponseBody
+    ResponseEntity updatePassword(@Valid @RequestBody UpdatePasswordTemplate updatePasswordTemplate) {
+        User user = userService.getUserByLogin(updatePasswordTemplate.getLogin());
+        if (null != user) {
+            if (ProjektUtils.passwordVerify(user.getPassword(), updatePasswordTemplate.getPassword())) {
+                if(ProjektUtils.passwordVerify(user.getPassword(),updatePasswordTemplate.getNewPassword())){
+                    return new ResponseEntity("New password must be different than previous", HttpStatus.BAD_REQUEST);
+                }
+                String passwordEncode = ProjektUtils.passwordEncode(String.valueOf(updatePasswordTemplate.getNewPassword()));
+                user.setPassword(passwordEncode);
+                userService.registerUser(user);
+                return new ResponseEntity("Password changed successfully",HttpStatus.OK);
+            }
+            return new ResponseEntity("Wrong password", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
+    }
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @DeleteMapping("/users/{login}")
+    public ResponseEntity deleteUser(@PathVariable("login") String login) {
+        User user = userService.getUserByLogin(login);
+        if (null != user) {
+            userService.deleteUser(user);
+            return new ResponseEntity(HttpStatus.OK);
+        } else {
+            return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
         }
     }
 }
