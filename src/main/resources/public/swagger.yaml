@@ -22,6 +22,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+    put:
+      tags:
+        - users
+      summary: Change password
+      operationId: changePassword
+      requestBody:
+        description: ChangePasswordTemplate object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordTemplate'
+      responses:
+        200:
+          description: Password changed
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "BAD_REQUEST",
+                "errors": [
+                  "User does not exist"
+                ]
+              }
+
   /users/{login}:
     get:
       tags:
@@ -47,8 +74,30 @@ paths:
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/UserNotFound'
+                $ref: '#/components/schemas/ObjectNotFound'
               example: User does not exist
+    delete:
+      tags:
+        - users
+      summary: Delete User by login
+      operationId: deleteUserByLogin
+      parameters:
+        - name: login
+          in: path
+          description: User login
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User deleted
+        404:
+          description: User not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: User does not exist
 
   /register:
     post:
@@ -111,28 +160,430 @@ paths:
         404:
           description: Wrong credentionals
           content:
-            text/plain:
+            application/json:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/WrongPassword'
                   - $ref: '#/components/schemas/WrongLogin'
               example: Wrong password
+  /remind-password{login}:
+    post:
+      tags:
+        - remind-password
+      summary: Remind User password
+      operationId: remindPassword
+      parameters:
+        - name: login
+          in: path
+          description: User login or email.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Remind successful
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              example: Mail was sent
+        404:
+          description: Wrong credentionals
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              example: User not found
+  /bus-stops:
+    get:
+      tags:
+        - bus-stops
+      summary: |
+        Get list of BusStops
+      operationId: getBusStops
+      responses:
+        200:
+          description: Returns BusStops list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusStop'
 
+    post:
+      tags:
+        - bus-stops
+      summary: Add new BusStop
+      operationId: addBusStop
+      requestBody:
+        description: BusStop object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBusStop'
+      responses:
+        201:
+          description: BusStop created
+          headers:
+            Location:
+              schema:
+                type: "string"
+              description: URL adress of created BusStop
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "BAD_REQUEST",
+                "errors": [
+                  "myGeoPoint.latitude: Wrong latitude value",
+                  "name: Size must be between 5 and 32 letters",
+                  "myGeoPoint.longitude: Longitude is null"
+                ]
+              }
+  /bus-stops/{name}:
+    get:
+      tags:
+        - bus-stops
+      summary: Get busStop by name
+      operationId: getBusStopByName
+      parameters:
+        - name: name
+          in: path
+          description: BusStop name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusStop response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusStop"
+        404:
+          description: BusStop not found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFound'
+              example: BusStop does not exist
+    delete:
+      tags:
+        - bus-stops
+      summary: Delete busStop by name
+      operationId: deleteBusStopByName
+      parameters:
+        - name: name
+          in: path
+          description: BusStop name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusStop response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Bus stop deleted successfully
+        404:
+          description: BusStop not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Bus stop does not exist
+
+  /bus-lines:
+    get:
+      tags:
+        - bus-lines
+      summary: |
+        Get list of BusLines
+      operationId: getBusLines
+      responses:
+        200:
+          description: Returns BusLines list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusLine'
+
+    post:
+      tags:
+        - bus-lines
+      summary: Add new BusLine
+      operationId: addBusLine
+      requestBody:
+        description: BusLine object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBusLine'
+      responses:
+        201:
+          description: BusLine created
+          headers:
+            Location:
+              schema:
+                type: "string"
+              description: URL adress of created BusLine
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "BAD_REQUEST",
+                "errors": [
+                  "startBusStopId: Bus stop not found",
+                  "endBusStopId: Bus stop not found",
+                  "name: This field is required"
+                ]
+              }
+  /bus-lines/{name}:
+    get:
+      tags:
+        - bus-lines
+      summary: Get BusLine by name
+      operationId: getBusLineByName
+      parameters:
+        - name: name
+          in: path
+          description: BusLine name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusLine response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusLine"
+        404:
+          description: BusLine not found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFound'
+              example: BusLine does not exist
+    delete:
+      tags:
+        - bus-lines
+      summary: Delete BusLine by name
+      operationId: deleteBusLineByName
+      parameters:
+        - name: name
+          in: path
+          description: BusLine name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusLine deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Bus line deleted successfully
+        404:
+          description: BusLine not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Bus line does not exist
+  /bus-lines/{busLineId}/bus-stops/{busStopId}:
+    post:
+      tags:
+        - bus-lines
+      summary: Add new BusStop to existing BusLine
+      description: BusStopId must be different then BusStop used as BusLine start or end
+      operationId: addBusStopToBusLine
+      parameters:
+        - name: busLineId
+          in: path
+          description: BusLine id
+          required: true
+          schema:
+            type: string
+        - name: busStopId
+          in: path
+          description: BusStop id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusStop added to BusLine
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Bus stop added to Bus line
+        404:
+          description: BusLine or BusStop not found
+          content:
+            text/plain:
+              example: Bus line does not exist || Bus stop does not exist
+        409:
+          description: BusStop already added
+          content:
+            text/plain:
+              example: Bus stop already added
+    delete:
+      tags:
+        - bus-lines
+      summary: Delete BusStop from BusLine by id
+      operationId: deleteBusStopFromBusLineById
+      parameters:
+        - name: busLineId
+          in: path
+          description: BusLine id
+          required: true
+          schema:
+            type: string
+        - name: busStopId
+          in: path
+          description: BusStop id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusStop deleted from BusLine
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Bus stop deleted from bus line
+        404:
+          description: BusLine or BusStop not found
+          content:
+            text/plain:
+              example: Bus line does not exist || Bus stop does not exist
+        409:
+          description: Bus stop not on list
+          content:
+            text/plain:
+              example: Bus stop not on list
+  /confirm-account:
+    post:
+      tags:
+        - from-email
+      summary: Confirm account from mail link
+      operationId: confirmAccount
+      parameters:
+        - in: query
+          name: tokenCode
+          schema:
+            type: string
+          description: Confirmation token
+          example: a5118be6-c8f3-4976-bc70- 8e19f776d7a5
+      responses:
+        200:
+          description: User confirmed
+        404:
+          description: Token not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "NOT_FOUND",
+                "errors": [
+                  "Token not found"
+                ]
+              }
+        409:
+          description: Account already confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "CONFLICT",
+                "errors": [
+                  "Account already confirmed"
+                ]
+              }
+  /remind-password:
+    post:
+      tags:
+        - from-email
+      summary: Remind password from mail link
+      operationId: remindPasswordEmail
+      parameters:
+        - in: query
+          name: tokenCode
+          schema:
+            type: string
+          description: Reset token code
+          example: a5118be6-c8f3-4976-bc70- 8e19f776d7a5
+      requestBody:
+        description: PasswordTemplate object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordTemplate'
+      responses:
+        200:
+          description: User confirmed
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Password changed successfully
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "BAD_REQUEST",
+                "errors": [
+                  "password: Password must contain special characters",
+                  "password: Password must contain number"
+                ]
+              }
+        409:
+          description: Password already changed
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Password already changed with this link
 components:
   schemas:
     User:
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
         enabled:
           type: boolean
         login:
           type: string
+          minLength: 5
+          maxLength: 32
         email:
           type: string
+          minLength: 5
+          maxLength: 32
         password:
           type: string
+          minLength: 5
+          maxLength: 32
 
     NewUser:
       required:
@@ -142,9 +593,77 @@ components:
       properties:
         login:
           type: string
+          minLength: 5
+          maxLength: 32
         email:
           type: string
+          minLength: 5
+          maxLength: 32
         password:
+          type: string
+          minLength: 5
+          maxLength: 32
+
+    BusStop:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        myGeoPoint:
+          $ref: '#/components/schemas/MyGeoPoint'
+
+    NewBusStop:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        myGeoPoint:
+          $ref: '#/components/schemas/MyGeoPoint'
+
+    MyGeoPoint:
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: -90
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+
+    BusLine:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        startBusStopId:
+          type: string
+        endBusStopId:
+          type: string
+        busStopList:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusStop'
+
+    NewBusLine:
+      required:
+        - name
+        - startBusStopId
+        - endBusStopId
+      properties:
+        name:
+          type: string
+        startBusStopId:
+          type: string
+        endBusStopId:
           type: string
 
     LoginTemplate:
@@ -156,6 +675,30 @@ components:
           type: string
         password:
           type: string
+
+    ChangePasswordTemplate:
+      required:
+        - login
+        - password
+        - newPassword
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+        newPassword:
+          type: string
+          minLength: 5
+          maxLength: 32
+
+    PasswordTemplate:
+      required:
+        - password
+      properties:
+        password:
+          type: string
+          minLength: 5
+          maxLength: 32
 
     ApplicationError:
       properties:
@@ -181,7 +724,7 @@ components:
         message:
           type: string
 
-    UserNotFound:
+    ObjectNotFound:
       properties:
         message:
           type: string

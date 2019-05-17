@@ -23,6 +23,13 @@ public class BusLineResource {
     private BusStopService busStopService;
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
+    @GetMapping("/bus-lines")
+    public @ResponseBody ResponseEntity getBusLines() {
+        return new ResponseEntity(busLineService.getAllBusLines(), HttpStatus.OK);
+
+    }
+
+    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/bus-lines")
     public ResponseEntity saveBusLine(@Valid @RequestBody BusLine busLine) throws URISyntaxException {
         busLineService.addBusLine(busLine);
@@ -48,7 +55,7 @@ public class BusLineResource {
         else {
             busLine.addBusStopToList(busStop);
             busLineService.addBusLine(busLine);
-            return new ResponseEntity("Bus stop added successfully", HttpStatus.OK);
+            return new ResponseEntity("Bus stop added to Bus line", HttpStatus.OK);
         }
     }
 
@@ -70,7 +77,7 @@ public class BusLineResource {
         else {
             busLine.deleteBusStopFromList(busStop);
             busLineService.addBusLine(busLine);
-            return new ResponseEntity("Bus stop deleted successfully", HttpStatus.OK);
+            return new ResponseEntity("Bus stop deleted from bus line", HttpStatus.OK);
         }
     }
 
@@ -83,13 +90,6 @@ public class BusLineResource {
         else {
             return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
         }
-
-    }
-
-    @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/bus-lines")
-    public @ResponseBody ResponseEntity getBusLines() {
-        return new ResponseEntity(busLineService.getAllBusLines(), HttpStatus.OK);
 
     }
 

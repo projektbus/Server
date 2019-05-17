@@ -12,8 +12,10 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 
-public class UpdatePasswordTemplate {
+public class ChangePasswordTemplate {
+    @NotNull(message = "{field.required}")
     private String login;
+    @NotNull(message = "{field.required}")
     private String password;
     @NotNull(message = "{field.required}")
     @Size(min = 5, max = 32, message = "{name.size}")

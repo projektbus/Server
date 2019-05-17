@@ -5,11 +5,12 @@ import ProjektBus.Server.model.SettingPasswordToken;
 import ProjektBus.Server.model.User;
 import ProjektBus.Server.model.template.LoginTemplate;
 import ProjektBus.Server.model.template.PasswordTemplate;
-import ProjektBus.Server.model.template.UpdatePasswordTemplate;
+import ProjektBus.Server.model.template.ChangePasswordTemplate;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.SettingPasswordTokenService;
 import ProjektBus.Server.service.UserService;
+import ProjektBus.Server.utils.ApplicationError;
 import ProjektBus.Server.utils.ProjektUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -61,14 +62,14 @@ public class UserResource {
         if (token != null) {
             User user = userService.getUserById(token.getUserId());
             if (user.isEnabled()) {
-                return new ResponseEntity("Account already confirmed", HttpStatus.CONFLICT);
+                return new ResponseEntity(new ApplicationError(HttpStatus.CONFLICT, "Account already confirmed"), HttpStatus.CONFLICT);
             } else {
                 user.setEnabled(true);
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
         } else
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new ApplicationError(HttpStatus.NOT_FOUND, "Token not found"), HttpStatus.NOT_FOUND);
 
     }
 
@@ -186,23 +187,23 @@ public class UserResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @PutMapping("/users/{login}")
+    @PutMapping("/users")
     public @ResponseBody
-    ResponseEntity updatePassword(@Valid @RequestBody UpdatePasswordTemplate updatePasswordTemplate) {
-        User user = userService.getUserByLogin(updatePasswordTemplate.getLogin());
+    ResponseEntity changePassword(@Valid @RequestBody ChangePasswordTemplate changePasswordTemplate) {
+        User user = userService.getUserByLogin(changePasswordTemplate.getLogin());
         if (null != user) {
-            if (ProjektUtils.passwordVerify(user.getPassword(), updatePasswordTemplate.getPassword())) {
-                if(ProjektUtils.passwordVerify(user.getPassword(),updatePasswordTemplate.getNewPassword())){
-                    return new ResponseEntity("New password must be different than previous", HttpStatus.BAD_REQUEST);
+            if (ProjektUtils.passwordVerify(user.getPassword(), changePasswordTemplate.getPassword())) {
+                if(ProjektUtils.passwordVerify(user.getPassword(), changePasswordTemplate.getNewPassword())){
+                    return new ResponseEntity(new ApplicationError(HttpStatus.BAD_REQUEST, "New password must be different than previous"), HttpStatus.BAD_REQUEST);
                 }
-                String passwordEncode = ProjektUtils.passwordEncode(String.valueOf(updatePasswordTemplate.getNewPassword()));
+                String passwordEncode = ProjektUtils.passwordEncode(String.valueOf(changePasswordTemplate.getNewPassword()));
                 user.setPassword(passwordEncode);
                 userService.registerUser(user);
-                return new ResponseEntity("Password changed successfully",HttpStatus.OK);
+                return new ResponseEntity(HttpStatus.OK);
             }
-            return new ResponseEntity("Wrong password", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ApplicationError(HttpStatus.BAD_REQUEST, "Wrong password"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity(new ApplicationError(HttpStatus.BAD_REQUEST, "User does not exist"), HttpStatus.BAD_REQUEST);
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
