@@ -153,10 +153,12 @@ paths:
         200:
           description: User logged successfully
           content:
-            text/plain:
+            application/json:
               schema:
-                type: "string"
-              example: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYWFsYSIsImlhdCI6MTU1NzA2NjE3OSwiZXhwIjoxNTU3MDczMzc5fQ.uCh5N4xNapNG9hLQDMTi_7BcFii0bb0Uq4Lsm7dTz8uEFMnDZQ075jK60s4y1D_yaT-gp34nno-8Nh78QpKYGQ"
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYWFsYSIsImlhdCI6MTU1NzA2NjE3OSwiZXhwIjoxNTU3MDczMzc5fQ.uCh5N4xNapNG9hLQDMTi_7BcFii0bb0Uq4Lsm7dTz8uEFMnDZQ075jK60s4y1D_yaT-gp34nno-8Nh78QpKYGQ"
+              }
         404:
           description: Wrong credentionals
           content:
@@ -165,7 +167,9 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/WrongPassword'
                   - $ref: '#/components/schemas/WrongLogin'
-              example: Wrong password
+              example: {
+                "response": "Wrong login"
+              }
   /remind-password{login}:
     post:
       tags:
@@ -699,6 +703,11 @@ components:
           type: string
           minLength: 5
           maxLength: 32
+
+    ApplicationResponse:
+      properties:
+        response:
+          type: string
 
     ApplicationError:
       properties:

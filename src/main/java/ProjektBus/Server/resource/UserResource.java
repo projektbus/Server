@@ -3,14 +3,15 @@ package ProjektBus.Server.resource;
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.model.SettingPasswordToken;
 import ProjektBus.Server.model.User;
+import ProjektBus.Server.model.template.ChangePasswordTemplate;
 import ProjektBus.Server.model.template.LoginTemplate;
 import ProjektBus.Server.model.template.PasswordTemplate;
-import ProjektBus.Server.model.template.ChangePasswordTemplate;
 import ProjektBus.Server.service.ConfirmationTokenService;
 import ProjektBus.Server.service.EmailSenderService;
 import ProjektBus.Server.service.SettingPasswordTokenService;
 import ProjektBus.Server.service.UserService;
 import ProjektBus.Server.utils.ApplicationError;
+import ProjektBus.Server.utils.ApplicationResponse;
 import ProjektBus.Server.utils.ProjektUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -103,7 +104,7 @@ public class UserResource {
                 if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
                     return createToken(user);
                 } else
-                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+                    return new ResponseEntity(new ApplicationResponse("Wrong password"), HttpStatus.NOT_FOUND);
             }
 
             user = userService.getUserByEmail(loginTemplate.getLogin());
@@ -111,9 +112,9 @@ public class UserResource {
                 if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
                     return createToken(user);
                 } else
-                    return new ResponseEntity("Wrong password", HttpStatus.NOT_FOUND);
+                    return new ResponseEntity(new ApplicationResponse("Wrong password"), HttpStatus.NOT_FOUND);
             }
-        return new ResponseEntity("Wrong login", HttpStatus.NOT_FOUND);
+        return new ResponseEntity(new ApplicationResponse("Wrong login"), HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity createToken(User user) {
@@ -125,7 +126,7 @@ public class UserResource {
                 .signWith(SignatureAlgorithm.HS512, "TbUL55^O|T<;UyT".getBytes())
                 .compact();
 
-        return new ResponseEntity(token, HttpStatus.OK);
+        return new ResponseEntity(new ApplicationResponse(token), HttpStatus.OK);
     }
 
     private void sendEmailWithConfirmationTokenToUser(User user, ConfirmationToken confirmationToken) {
