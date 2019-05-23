@@ -30,6 +30,11 @@ public class AppConfig {
     }
 
     @Bean
+    public CarrierService getCarrierService(){
+        return new CarrierServiceImpl();
+    }
+
+    @Bean
     public ConfirmationTokenService getConfirmationTokenService() {
         return new ConfirmationTokenServiceImpl();
     }
