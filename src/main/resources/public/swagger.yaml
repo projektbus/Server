@@ -568,6 +568,108 @@ paths:
               schema:
                 type: string
                 example: Password already changed with this link
+  /carriers:
+    get:
+      tags:
+        - carriers
+      summary: |
+        Get list of Carriers
+      operationId: getCarriers
+      responses:
+        200:
+          description: Returns Carriers list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Carrier'
+
+    post:
+      tags:
+        - carriers
+      summary: Add new Carrier
+      operationId: addCarrier
+      requestBody:
+        description: Carrier object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCarrier'
+      responses:
+        201:
+          description: Carrier created
+          headers:
+            Location:
+              schema:
+                type: "string"
+              description: URL adress of created Carrier
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "status": "BAD_REQUEST",
+                "errors": [
+                  "name: Carrier with this name already exists",
+                ]
+              }
+  /carriers/{id}:
+    get:
+      tags:
+        - carriers
+      summary: Get carrier by id
+      operationId: getCarrier
+      parameters:
+        - name: id
+          in: path
+          description: Carrier name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Carrier response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Carrier"
+        404:
+          description: Carrier not found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFound'
+              example: Carrier does not exist
+    delete:
+      tags:
+        - carriers
+      summary: Delete carrier by id
+      operationId: deleteCarrier
+      parameters:
+        - name: id
+          in: path
+          description: Carrier id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Carrier response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Carrier deleted successfully
+        404:
+          description: Carrier not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Carrier does not exist
 components:
   schemas:
     User:
@@ -668,6 +770,20 @@ components:
         startBusStopId:
           type: string
         endBusStopId:
+          type: string
+
+    Carrier:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    NewCarrier:
+      required:
+        - name
+      properties:
+        name:
           type: string
 
     LoginTemplate:

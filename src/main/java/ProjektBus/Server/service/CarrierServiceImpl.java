@@ -29,7 +29,7 @@ public class CarrierServiceImpl implements CarrierService {
 
     @Override
     public Carrier getCarrierByName(String name) {
-        return carrierRepository.findById(name).isPresent() ? carrierRepository.findById(name).get() : null ;
+        return carrierRepository.findByName(name);
     }
 
     @Override
