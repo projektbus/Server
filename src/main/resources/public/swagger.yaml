@@ -248,16 +248,16 @@ paths:
                   "myGeoPoint.longitude: Longitude is null"
                 ]
               }
-  /bus-stops/{id}:
+  /bus-stops/{name}:
     get:
       tags:
         - bus-stops
-      summary: Get busStop by id
-      operationId: getBusStopById
+      summary: Get busStop by name
+      operationId: getBusStopByName
       parameters:
-        - name: id
+        - name: name
           in: path
-          description: BusStop id
+          description: BusStop name
           required: true
           schema:
             type: string
@@ -278,12 +278,12 @@ paths:
     delete:
       tags:
         - bus-stops
-      summary: Delete busStop by id
-      operationId: deleteBusStopById
+      summary: Delete busStop by name
+      operationId: deleteBusStopByName
       parameters:
-        - name: id
+        - name: name
           in: path
-          description: BusStop id
+          description: BusStop name
           required: true
           schema:
             type: string
@@ -353,16 +353,16 @@ paths:
                   "name: This field is required"
                 ]
               }
-  /bus-lines/{id}:
+  /bus-lines/{name}:
     get:
       tags:
         - bus-lines
-      summary: Get BusLine by id
-      operationId: getBusLineById
+      summary: Get BusLine by name
+      operationId: getBusLineByName
       parameters:
-        - name: id
+        - name: name
           in: path
-          description: BusLine id
+          description: BusLine name
           required: true
           schema:
             type: string
@@ -383,12 +383,12 @@ paths:
     delete:
       tags:
         - bus-lines
-      summary: Delete BusLine by id
-      operationId: deleteBusLineById
+      summary: Delete BusLine by name
+      operationId: deleteBusLineByName
       parameters:
-        - name: id
+        - name: name
           in: path
-          description: BusLine id
+          description: BusLine name
           required: true
           schema:
             type: string
@@ -748,6 +748,8 @@ components:
       properties:
         id:
           type: string
+        name:
+          type: string
         startBusStopId:
           type: string
         endBusStopId:
@@ -759,9 +761,12 @@ components:
 
     NewBusLine:
       required:
+        - name
         - startBusStopId
         - endBusStopId
       properties:
+        name:
+          type: string
         startBusStopId:
           type: string
         endBusStopId:
