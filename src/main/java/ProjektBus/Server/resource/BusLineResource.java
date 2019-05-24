@@ -82,10 +82,10 @@ public class BusLineResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/bus-lines/{name}")
-    public @ResponseBody ResponseEntity getBusLine(@PathVariable("name") String name)  {
-        if (null != busLineService.getBusLineByName(name)) {
-            return new ResponseEntity(busLineService.getBusLineByName(name), HttpStatus.OK);
+    @GetMapping("/bus-lines/{id}")
+    public @ResponseBody ResponseEntity getBusLine(@PathVariable("id") String id)  {
+        if (null != busLineService.getBusLineById(id)) {
+            return new ResponseEntity(busLineService.getBusLineById(id), HttpStatus.OK);
         }
         else {
             return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
@@ -94,10 +94,10 @@ public class BusLineResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @DeleteMapping("/bus-lines/{name}")
-    public @ResponseBody ResponseEntity deleteBusLine(@PathVariable("name") String name)  {
-        BusLine busLine = busLineService.getBusLineByName(name);
-        if (busLine != busLineService.getBusLineByName(name)) {
+    @DeleteMapping("/bus-lines/{id}")
+    public @ResponseBody ResponseEntity deleteBusLine(@PathVariable("id") String id)  {
+        BusLine busLine = busLineService.getBusLineById(id);
+        if (busLine != busLineService.getBusLineById(id)) {
             busLineService.deleteBusLine(busLine);
             return new ResponseEntity("Bus line deleted successfully", HttpStatus.OK);
         }
