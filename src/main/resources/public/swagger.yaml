@@ -748,8 +748,6 @@ components:
       properties:
         id:
           type: string
-        name:
-          type: string
         startBusStopId:
           type: string
         endBusStopId:
@@ -761,12 +759,9 @@ components:
 
     NewBusLine:
       required:
-        - name
         - startBusStopId
         - endBusStopId
       properties:
-        name:
-          type: string
         startBusStopId:
           type: string
         endBusStopId:

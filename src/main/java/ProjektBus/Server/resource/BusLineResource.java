@@ -34,7 +34,7 @@ public class BusLineResource {
     public ResponseEntity saveBusLine(@Valid @RequestBody BusLine busLine) throws URISyntaxException {
         busLineService.addBusLine(busLine);
 
-        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/bus-lines/" + busLine.getName())).build();
+        return ResponseEntity.created(new URI("https://peaceful-sierra-14544.herokuapp.com/bus-lines/" + busLine.getId())).build();
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")

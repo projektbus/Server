@@ -22,11 +22,6 @@ public class BusLineServiceImpl implements BusLineService {
     }
 
     @Override
-    public BusLine getBusLineByName(String name) {
-        return busLineRepository.findByName(name);
-    }
-
-    @Override
     public void deleteBusLine(BusLine busLine) {
         busLineRepository.delete(busLine);
     }
