@@ -11,7 +11,7 @@ import static java.util.Objects.nonNull;
 
 public class ExistCarrierValidator implements ConstraintValidator<ExistCarrier, String> {
     @Autowired
-    CarrierService carrierService;
+    private CarrierService carrierService;
 
     public boolean isValid(String id, ConstraintValidatorContext context) {
         return id != null && nonNull(carrierService.getCarrierById(id));

@@ -1,8 +1,6 @@
 package ProjektBus.Server.validation.validationInterfaces;
 
-import ProjektBus.Server.validation.validator.ExistBusLineValidator;
 import ProjektBus.Server.validation.validator.ExistCarrierValidator;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;
