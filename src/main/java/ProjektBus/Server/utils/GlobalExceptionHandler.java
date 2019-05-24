@@ -32,14 +32,14 @@ public class GlobalExceptionHandler{
         }
 
         logger.error(ex.getMessage());
-        return new ApplicationError(HttpStatus.BAD_REQUEST, errors);
+        return new ApplicationError(errors);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ApplicationError handleMissingServletRequestParameterException(MissingServletRequestParameterException ex, WebRequest request) {
         logger.error(ex.getMessage());
-        return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return new ApplicationError(ex.getMessage());
     }
 
 //    @ExceptionHandler(Exception.class)

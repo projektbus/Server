@@ -8,4 +8,8 @@ import lombok.Getter;
 public class ApplicationResponse {
 
     private String response;
+
+    public ApplicationResponse(ErrorCodes errorCodes){
+        this.response = errorCodes.getResponse();
+    }
 }

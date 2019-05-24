@@ -2,6 +2,9 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.BusStop;
 import ProjektBus.Server.service.BusStopService;
+import ProjektBus.Server.utils.ApplicationError;
+import ProjektBus.Server.utils.ApplicationResponse;
+import ProjektBus.Server.utils.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,18 +32,17 @@ public class BusStopResource {
     @GetMapping("/bus-stops/{name}")
     public @ResponseBody ResponseEntity getBusStop(@PathVariable("name") String name)  {
         if (null != busStopService.getBusStopByName(name)) {
-            return new ResponseEntity(busStopService.getBusStopByName(name), HttpStatus.OK);
+            return new ResponseEntity<>(busStopService.getBusStopByName(name), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_STOP_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
-//TODO zobaczyc czy odpowiedzi mozna dawac z pliku
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/bus-stops")
     public @ResponseBody ResponseEntity getBusStops() {
-        return new ResponseEntity(busStopService.getAllBusStops(), HttpStatus.OK);
+        return new ResponseEntity<>(busStopService.getAllBusStops(), HttpStatus.OK);
 
     }
 
@@ -50,10 +52,10 @@ public class BusStopResource {
         BusStop busStop = busStopService.getBusStopByName(name);
         if (busStop != busStopService.getBusStopByName(name)) {
             busStopService.deleteBusStop(busStop);
-            return new ResponseEntity("Bus stop deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.BUS_STOP_DELETE_SUCCESSFUL), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_STOP_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 
