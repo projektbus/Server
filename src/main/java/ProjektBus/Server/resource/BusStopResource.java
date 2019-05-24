@@ -26,15 +26,14 @@ public class BusStopResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @GetMapping("/bus-stops/{name}")
-    public @ResponseBody ResponseEntity getBusStop(@PathVariable("name") String name)  {
-        if (null != busStopService.getBusStopByName(name)) {
-            return new ResponseEntity(busStopService.getBusStopByName(name), HttpStatus.OK);
+    @GetMapping("/bus-stops/{id}")
+    public @ResponseBody ResponseEntity getBusStop(@PathVariable("id") String id)  {
+        if (null != busStopService.getBusStopById(id)) {
+            return new ResponseEntity(busStopService.getBusStopById(id), HttpStatus.OK);
         }
         else {
             return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
         }
-//TODO zobaczyc czy odpowiedzi mozna dawac z pliku
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -45,10 +44,10 @@ public class BusStopResource {
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
-    @DeleteMapping("/bus-stops/{name}")
-    public @ResponseBody ResponseEntity deleteBusStop(@PathVariable("name") String name)  {
-        BusStop busStop = busStopService.getBusStopByName(name);
-        if (busStop != busStopService.getBusStopByName(name)) {
+    @DeleteMapping("/bus-stops/{id}")
+    public @ResponseBody ResponseEntity deleteBusStop(@PathVariable("id") String id)  {
+        BusStop busStop = busStopService.getBusStopById(id);
+        if (busStop != busStopService.getBusStopById(id)) {
             busStopService.deleteBusStop(busStop);
             return new ResponseEntity("Bus stop deleted successfully", HttpStatus.OK);
         }
