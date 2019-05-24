@@ -25,8 +25,18 @@ public class AppConfig {
     }
 
     @Bean
+    public BusConnectionService getBusConnectionService(){
+        return new BusConnectionServiceImpl();
+    }
+
+    @Bean
     public BusLineService getBusLineService(){
         return new BusLineServiceImpl();
+    }
+
+    @Bean
+    public CarrierService getCarrierService(){
+        return new CarrierServiceImpl();
     }
 
     @Bean

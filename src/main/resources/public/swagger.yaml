@@ -610,7 +610,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "BAD_REQUEST",
                 "errors": [
                   "password: Haslo musi zawierac litere",
                   "password: Haslo musi zawierac liczbe"
@@ -625,6 +624,117 @@ paths:
               example: {
                 "errors": [
                   "Hasło zostalo już zmienione"
+                ]
+              }
+  /carriers:
+    get:
+      tags:
+        - carriers
+      summary: |
+        Get list of Carriers
+      operationId: getCarriers
+      responses:
+        200:
+          description: Returns Carriers list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Carrier'
+
+    post:
+      tags:
+        - carriers
+      summary: Add new Carrier
+      operationId: addCarrier
+      requestBody:
+        description: Carrier object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCarrier'
+      responses:
+        201:
+          description: Carrier created
+          headers:
+            Location:
+              schema:
+                type: "string"
+              description: URL adress of created Carrier
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Przewoźnik o takiej nazwie już istnieje"
+                ]
+              }
+  /carriers/{id}:
+    get:
+      tags:
+        - carriers
+      summary: Get carrier by id
+      operationId: getCarrier
+      parameters:
+        - name: id
+          in: path
+          description: Carrier name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Carrier response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Carrier"
+        404:
+          description: Carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Przewoźnk nie istnieje"
+                ]
+              }
+    delete:
+      tags:
+        - carriers
+      summary: Delete carrier by id
+      operationId: deleteCarrier
+      parameters:
+        - name: id
+          in: path
+          description: Carrier id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Carrier response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Przystanek usunięty"
+              }
+        404:
+          description: Carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Przewoźnik nie istnieje"
                 ]
               }
 components:
@@ -729,6 +839,20 @@ components:
         endBusStopId:
           type: string
 
+    Carrier:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    NewCarrier:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
     LoginTemplate:
       required:
         - login
@@ -770,8 +894,6 @@ components:
 
     ApplicationError:
       properties:
-        status:
-          type: string
         errors:
           $ref: '#/components/schemas/ErrorList'
 

@@ -31,7 +31,12 @@ public enum ErrorCodes {
     BUS_STOP_ADDED_TO_BUS_LINE("Przystanek dodano do linii"),
     BUS_LINE_DELETE_SUCCESSFUL("Linia została usunięta"),
     BUS_STOP_DELETED_FROM_BUS_LINE("Przystanek poprawnie usunięty z linii"),
-    BUS_STOP_NOT_ON_LIST("Linia nie zewiera tego przeystanku");
+    BUS_STOP_NOT_ON_LIST("Linia nie zewiera tego przeystanku"),
+    /*
+            CARRIER
+     */
+    CARRIER_NOT_FOUND("Przewoźnik nie istnieje"),
+    CARRIER_DELETE_SUCCESSFUL("Przewoźnik został usunięty");
 
     private String response;
 }
