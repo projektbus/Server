@@ -6,12 +6,13 @@ import ProjektBus.Server.model.User;
 import ProjektBus.Server.model.template.ChangePasswordTemplate;
 import ProjektBus.Server.model.template.LoginTemplate;
 import ProjektBus.Server.model.template.PasswordTemplate;
-import ProjektBus.Server.service.ConfirmationTokenService;
-import ProjektBus.Server.service.EmailSenderService;
-import ProjektBus.Server.service.SettingPasswordTokenService;
-import ProjektBus.Server.service.UserService;
+import ProjektBus.Server.service.interfaces.ConfirmationTokenService;
+import ProjektBus.Server.service.interfaces.EmailSenderService;
+import ProjektBus.Server.service.interfaces.SettingPasswordTokenService;
+import ProjektBus.Server.service.interfaces.UserService;
 import ProjektBus.Server.utils.ApplicationError;
 import ProjektBus.Server.utils.ApplicationResponse;
+import ProjektBus.Server.utils.ErrorCodes;
 import ProjektBus.Server.utils.ProjektUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -63,14 +64,14 @@ public class UserResource {
         if (token != null) {
             User user = userService.getUserById(token.getUserId());
             if (user.isEnabled()) {
-                return new ResponseEntity(new ApplicationError(HttpStatus.CONFLICT, "Account already confirmed"), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new ApplicationError(ErrorCodes.ACCOUNT_ALREADY_EXIST), HttpStatus.CONFLICT);
             } else {
                 user.setEnabled(true);
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
         } else
-            return new ResponseEntity(new ApplicationError(HttpStatus.NOT_FOUND, "Token not found"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.TOKEN_NOT_FOUND), HttpStatus.NOT_FOUND);
 
     }
 
@@ -79,11 +80,11 @@ public class UserResource {
     public @ResponseBody
     ResponseEntity getUser(@PathVariable String login) {
         if (null != userService.getUserByLogin(login)) {
-            return new ResponseEntity(userService.getUserByLogin(login), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getUserByLogin(login), HttpStatus.OK);
         } else if (null != userService.getUserByEmail(login)) {
-            return new ResponseEntity(userService.getUserByEmail(login), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getUserByEmail(login), HttpStatus.OK);
         } else {
-            return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.USER_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -92,29 +93,29 @@ public class UserResource {
     @GetMapping("/users")
     public @ResponseBody
     ResponseEntity getUsers() {
-        return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/login")
     public ResponseEntity postLogin(@RequestBody LoginTemplate loginTemplate) {
-            User user = userService.getUserByLogin(loginTemplate.getLogin());
+        User user = userService.getUserByLogin(loginTemplate.getLogin());
 
-            if (user != null) {
-                if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
-                    return createToken(user);
-                } else
-                    return new ResponseEntity(new ApplicationResponse("Wrong password"), HttpStatus.NOT_FOUND);
-            }
+        if (user != null) {
+            if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
+                return createToken(user);
+            } else
+                return new ResponseEntity<>(new ApplicationError(ErrorCodes.WRONG_PASSWORD), HttpStatus.NOT_FOUND);
+        }
 
-            user = userService.getUserByEmail(loginTemplate.getLogin());
-            if (user != null) {
-                if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
-                    return createToken(user);
-                } else
-                    return new ResponseEntity(new ApplicationResponse("Wrong password"), HttpStatus.NOT_FOUND);
-            }
-        return new ResponseEntity(new ApplicationResponse("Wrong login"), HttpStatus.NOT_FOUND);
+        user = userService.getUserByEmail(loginTemplate.getLogin());
+        if (user != null) {
+            if (ProjektUtils.passwordVerify(user.getPassword(),loginTemplate.getPassword())) {
+                return createToken(user);
+            } else
+                return new ResponseEntity<>(new ApplicationError( ErrorCodes.WRONG_PASSWORD), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(new ApplicationError(ErrorCodes.WRONG_LOGIN), HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity createToken(User user) {
@@ -126,7 +127,7 @@ public class UserResource {
                 .signWith(SignatureAlgorithm.HS512, "TbUL55^O|T<;UyT".getBytes())
                 .compact();
 
-        return new ResponseEntity(new ApplicationResponse(token), HttpStatus.OK);
+        return new ResponseEntity<>(new ApplicationResponse(token), HttpStatus.OK);
     }
 
     private void sendEmailWithConfirmationTokenToUser(User user, ConfirmationToken confirmationToken) {
@@ -151,9 +152,9 @@ public class UserResource {
             SettingPasswordToken resetToken = new SettingPasswordToken(user.getId());
             settingPasswordTokenService.save(resetToken);
             sendEmailWithRemindPasswordToken(user, resetToken);
-            return new ResponseEntity("Mail was sent", HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.MAIL_SEND), HttpStatus.OK);
         } else {
-            return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.USER_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -181,9 +182,9 @@ public class UserResource {
             userService.registerUser(user);
             token.setActive(false);
             settingPasswordTokenService.save(token);
-            return new ResponseEntity("Password changed successfully", HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.PASSWORD_CHANGE_SUCCESSFUL), HttpStatus.OK);
         } else {
-            return new ResponseEntity("Password already changed with this link", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.PASSWORD_ALREADY_CHANGED), HttpStatus.CONFLICT);
         }
     }
 
@@ -195,16 +196,16 @@ public class UserResource {
         if (null != user) {
             if (ProjektUtils.passwordVerify(user.getPassword(), changePasswordTemplate.getPassword())) {
                 if(ProjektUtils.passwordVerify(user.getPassword(), changePasswordTemplate.getNewPassword())){
-                    return new ResponseEntity(new ApplicationError(HttpStatus.BAD_REQUEST, "New password must be different than previous"), HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new ApplicationError(ErrorCodes.PASSWORD_MUST_BE_DIFFERENT), HttpStatus.BAD_REQUEST);
                 }
                 String passwordEncode = ProjektUtils.passwordEncode(String.valueOf(changePasswordTemplate.getNewPassword()));
                 user.setPassword(passwordEncode);
                 userService.registerUser(user);
                 return new ResponseEntity(HttpStatus.OK);
             }
-            return new ResponseEntity(new ApplicationError(HttpStatus.BAD_REQUEST, "Wrong password"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.WRONG_PASSWORD), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(new ApplicationError(HttpStatus.BAD_REQUEST, "User does not exist"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApplicationError(ErrorCodes.USER_NOT_FOUND), HttpStatus.BAD_REQUEST);
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
@@ -215,7 +216,7 @@ public class UserResource {
             userService.deleteUser(user);
             return new ResponseEntity(HttpStatus.OK);
         } else {
-            return new ResponseEntity("User does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.USER_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 }

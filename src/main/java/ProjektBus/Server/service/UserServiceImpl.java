@@ -2,6 +2,7 @@ package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.User;
 import ProjektBus.Server.repository.UserRepository;
+import ProjektBus.Server.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 

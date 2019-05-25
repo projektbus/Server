@@ -1,11 +1,10 @@
 package ProjektBus.Server.validation.validator;
 
-import javax.validation.ConstraintValidator;
-
-import ProjektBus.Server.service.BusLineService;
+import ProjektBus.Server.service.interfaces.BusLineService;
 import ProjektBus.Server.validation.validationInterfaces.UniqueBusLineName;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import static java.util.Objects.isNull;

@@ -1,6 +1,6 @@
 package ProjektBus.Server.validation.validator;
 
-import ProjektBus.Server.service.CarrierService;
+import ProjektBus.Server.service.interfaces.CarrierService;
 import ProjektBus.Server.validation.validationInterfaces.ExistCarrier;
 import org.springframework.beans.factory.annotation.Autowired;
 

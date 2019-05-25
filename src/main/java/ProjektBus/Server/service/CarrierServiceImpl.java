@@ -2,6 +2,7 @@ package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.Carrier;
 import ProjektBus.Server.repository.CarrierRepository;
+import ProjektBus.Server.service.interfaces.CarrierService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

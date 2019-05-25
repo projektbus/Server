@@ -1,5 +1,6 @@
 package ProjektBus.Server.service;
 
+import ProjektBus.Server.service.interfaces.EmailSenderService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

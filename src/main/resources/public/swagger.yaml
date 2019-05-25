@@ -43,9 +43,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "BAD_REQUEST",
                 "errors": [
-                  "User does not exist"
+                  "Nie znaleziono użytkownika"
                 ]
               }
 
@@ -72,10 +71,14 @@ paths:
         404:
           description: User not found
           content:
-            text/plain:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ObjectNotFound'
-              example: User does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znaleziono użytkownika"
+                ]
+              }
     delete:
       tags:
         - users
@@ -94,10 +97,14 @@ paths:
         404:
           description: User not found
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: User does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znaleziono użytkownika"
+                ]
+              }
 
   /register:
     post:
@@ -126,14 +133,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "BAD_REQUEST",
                 "errors": [
-                  "password: Password must contain special characters",
-                  "email: Size must be between 5 and 32 letters",
-                  "email: Wrong email",
-                  "password: Size must be between 5 and 32 letters",
-                  "login: Size must be between 5 and 32 letters",
-                  "password: Password must contain number"
+                  "password: Haslo musi zawierac znak specjalny",
+                  "password: Haslo musi zawierac liczbe",
+                  "login: Dlugosc musi byc pomiedzy 5 a 32 liter"
                 ]
               }
 
@@ -168,7 +171,7 @@ paths:
                   - $ref: '#/components/schemas/WrongPassword'
                   - $ref: '#/components/schemas/WrongLogin'
               example: {
-                "response": "Wrong login"
+                "response": "Zły login"
               }
   /remind-password{login}:
     post:
@@ -187,17 +190,23 @@ paths:
         200:
           description: Remind successful
           content:
-            text/plain:
+            application/json:
               schema:
-                type: "string"
-              example: Mail was sent
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Mail został wysłany"
+              }
         404:
           description: Wrong credentionals
           content:
-            text/plain:
+            application/json:
               schema:
-                type: "string"
-              example: User not found
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znaleziono użytkownika"
+                ]
+              }
   /bus-stops:
     get:
       tags:
@@ -241,11 +250,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "BAD_REQUEST",
                 "errors": [
-                  "myGeoPoint.latitude: Wrong latitude value",
-                  "name: Size must be between 5 and 32 letters",
-                  "myGeoPoint.longitude: Longitude is null"
+                  "myGeoPoint.longitude: Longitude Nie podano dlugosci i szerokosci geograficznej",
+                  "name: Pole wymagane",
+                  "myGeoPoint.latitude: Latitude Nie podano dlugosci i szerokosci geograficznej"
                 ]
               }
   /bus-stops/{name}:
@@ -271,10 +279,14 @@ paths:
         404:
           description: BusStop not found
           content:
-            text/plain:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ObjectNotFound'
-              example: BusStop does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono przystanku"
+                ]
+              }
     delete:
       tags:
         - bus-stops
@@ -291,17 +303,23 @@ paths:
         200:
           description: BusStop response
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Bus stop deleted successfully
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Przystanek został usunięty"
+              }
         404:
           description: BusStop not found
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Bus stop does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono przystanku"
+                ]
+              }
 
   /bus-lines:
     get:
@@ -346,11 +364,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "BAD_REQUEST",
                 "errors": [
-                  "startBusStopId: Bus stop not found",
-                  "endBusStopId: Bus stop not found",
-                  "name: This field is required"
+                  "name: Pole wymagane",
+                  "endBusStopId: Pole wymagane",
+                  "startBusStopId: Pole wymagane"
                 ]
               }
   /bus-lines/{name}:
@@ -376,10 +393,14 @@ paths:
         404:
           description: BusLine not found
           content:
-            text/plain:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ObjectNotFound'
-              example: BusLine does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono linii"
+                ]
+              }
     delete:
       tags:
         - bus-lines
@@ -396,17 +417,23 @@ paths:
         200:
           description: BusLine deleted
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Bus line deleted successfully
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Linia została usunięta"
+              }
         404:
           description: BusLine not found
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Bus line does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono linii"
+                ]
+              }
   /bus-lines/{busLineId}/bus-stops/{busStopId}:
     post:
       tags:
@@ -431,20 +458,34 @@ paths:
         200:
           description: BusStop added to BusLine
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Bus stop added to Bus line
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Przystanek dodano do linii"
+              }
         404:
           description: BusLine or BusStop not found
           content:
-            text/plain:
-              example: Bus line does not exist || Bus stop does not exist
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono linii"
+                ]
+              }
         409:
           description: BusStop already added
           content:
-            text/plain:
-              example: Bus stop already added
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Przystanek juz należy do tej linii"
+                ]
+              }
     delete:
       tags:
         - bus-lines
@@ -467,20 +508,232 @@ paths:
         200:
           description: BusStop deleted from BusLine
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Bus stop deleted from bus line
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Przystanek poprawnie usunięty z linii"
+              }
         404:
           description: BusLine or BusStop not found
           content:
-            text/plain:
-              example: Bus line does not exist || Bus stop does not exist
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono linii"
+                ]
+              }
         409:
           description: Bus stop not on list
           content:
-            text/plain:
-              example: Bus stop not on list
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono linii"
+                ]
+              }
+  /bus-connections:
+    get:
+      tags:
+        - bus-connections
+      summary: |
+        Get list of Connections
+      operationId: getBusConnections
+      responses:
+        200:
+          description: Returns Connections list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusConnection'
+
+    post:
+      tags:
+        - bus-connections
+      summary: Add new Connection
+      operationId: addBusConnection
+      requestBody:
+        description: BusConnection object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBusConnection'
+            example: {
+              "busLineId": "string",
+              "carrierId": "string",
+              "busStopId": "string",
+              "departureTime": [0,1]
+            }
+      responses:
+        201:
+          description: BusConnection created
+          headers:
+            Location:
+              schema:
+                type: "string"
+              description: URL adress of created BusConnection
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+                example: {
+                  "errors": [
+                    "busLineId: Pole wymagane",
+                    "busLineId: Linia nie istnieje",
+                    "carrierId: Pole wymagane",
+                    "busStopId: Przystanek nie istnieje",
+                    "departureTime: Pole wymagane",
+                    "carrierId: Przewoznik nie istnieje",
+                    "busStopId: Pole wymagane"
+                  ]
+                }
+  /bus-connections/{id}:
+    get:
+      tags:
+        - bus-connections
+      summary: Get busConnection by id
+      operationId: getBusConnectionById
+      parameters:
+        - name: id
+          in: path
+          description: BusConnection id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusConnection"
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono połączenia"
+                ]
+              }
+    delete:
+      tags:
+        - bus-connections
+      summary: Delete busConnection by id
+      operationId: deleteBusConnectionByName
+      parameters:
+        - name: id
+          in: path
+          description: BusConnection id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Połączenie zostało usunięte"
+              }
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono polączenia"
+                ]
+              }
+  /bus-connections/bus-lines/{busLineId}/bus-stops/{busStopId}:
+    get:
+      tags:
+        - bus-connections
+      summary: Get BusConnection by BusLine and BusStop
+      operationId: getBusConnectionByBusLineAndBusLine
+      parameters:
+        - name: busLineId
+          in: path
+          description: BusLine id
+          required: true
+          schema:
+            type: string
+        - name: busStopId
+          in: path
+          description: BusStop id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusConnection"
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono połączenia"
+                ]
+              }
+  /bus-connections/bus-lines/{busLineId}/bus-carriers/{carrierId}:
+    get:
+      tags:
+        - bus-connections
+      summary: Get BusConnection by BusLine and Carrier
+      operationId: getBusConnectionByBusLineAndCarrier
+      parameters:
+        - name: busLineId
+          in: path
+          description: BusLine id
+          required: true
+          schema:
+            type: string
+        - name: carrierId
+          in: path
+          description: Carrier id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusConnection"
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono połączenia"
+                ]
+              }
+
   /confirm-account:
     post:
       tags:
@@ -504,7 +757,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "NOT_FOUND",
                 "errors": [
                   "Token not found"
                 ]
@@ -516,7 +768,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "CONFLICT",
                 "errors": [
                   "Account already confirmed"
                 ]
@@ -544,10 +795,12 @@ paths:
         200:
           description: User confirmed
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Password changed successfully
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Przystanek poprawnie usunięty z linii"
+              }
         400:
           description: Validation errors
           content:
@@ -555,19 +808,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "BAD_REQUEST",
                 "errors": [
-                  "password: Password must contain special characters",
-                  "password: Password must contain number"
+                  "password: Haslo musi zawierac litere",
+                  "password: Haslo musi zawierac liczbe"
                 ]
               }
         409:
           description: Password already changed
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Password already changed with this link
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Hasło zostalo już zmienione"
+                ]
+              }
   /carriers:
     get:
       tags:
@@ -611,9 +867,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationError'
               example: {
-                "status": "BAD_REQUEST",
                 "errors": [
-                  "name: Carrier with this name already exists",
+                  "Przewoźnik o takiej nazwie już istnieje"
                 ]
               }
   /carriers/{id}:
@@ -639,10 +894,14 @@ paths:
         404:
           description: Carrier not found
           content:
-            text/plain:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ObjectNotFound'
-              example: Carrier does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Przewoźnk nie istnieje"
+                ]
+              }
     delete:
       tags:
         - carriers
@@ -659,17 +918,23 @@ paths:
         200:
           description: Carrier response
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Carrier deleted successfully
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Przystanek usunięty"
+              }
         404:
           description: Carrier not found
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Carrier does not exist
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Przewoźnik nie istnieje"
+                ]
+              }
 components:
   schemas:
     User:
@@ -727,6 +992,39 @@ components:
           type: string
         myGeoPoint:
           $ref: '#/components/schemas/MyGeoPoint'
+
+    BusConnection:
+      properties:
+        id:
+          type: string
+        busLineId:
+          type: string
+        carrierId:
+          type: string
+        busStopId:
+          type: string
+        departureTime:
+          type: array
+          items:
+            type: integer
+
+    NewBusConnection:
+      required:
+        - busLineId
+        - busStopId
+        - carrierId
+        - departureTime
+      properties:
+        busLineId:
+          type: string
+        carrierId:
+          type: string
+        busStopId:
+          type: string
+        departureTime:
+          type: array
+          items:
+            type: integer
 
     MyGeoPoint:
       required:
@@ -827,8 +1125,6 @@ components:
 
     ApplicationError:
       properties:
-        status:
-          type: string
         errors:
           $ref: '#/components/schemas/ErrorList'
 
@@ -845,11 +1141,6 @@ components:
           type: string
 
     WrongLogin:
-      properties:
-        message:
-          type: string
-
-    ObjectNotFound:
       properties:
         message:
           type: string

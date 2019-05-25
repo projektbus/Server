@@ -2,8 +2,11 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.BusLine;
 import ProjektBus.Server.model.BusStop;
-import ProjektBus.Server.service.BusLineService;
-import ProjektBus.Server.service.BusStopService;
+import ProjektBus.Server.service.interfaces.BusLineService;
+import ProjektBus.Server.service.interfaces.BusStopService;
+import ProjektBus.Server.utils.ApplicationError;
+import ProjektBus.Server.utils.ApplicationResponse;
+import ProjektBus.Server.utils.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +28,7 @@ public class BusLineResource {
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/bus-lines")
     public @ResponseBody ResponseEntity getBusLines() {
-        return new ResponseEntity(busLineService.getAllBusLines(), HttpStatus.OK);
+        return new ResponseEntity<>(busLineService.getAllBusLines(), HttpStatus.OK);
 
     }
 
@@ -44,18 +47,18 @@ public class BusLineResource {
         BusStop busStop = busStopService.getBusStopById(busStopId);
 
         if(busLine == null) {
-            return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_LINE_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
         else if(busStop == null) {
-            return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_STOP_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
         else if(busLine.isBusStopOnList(busStopId)) {
-            return new ResponseEntity("Bus stop already added", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_STOP_ALREADY_ADDED), HttpStatus.CONFLICT);
         }
         else {
             busLine.addBusStopToList(busStop);
             busLineService.addBusLine(busLine);
-            return new ResponseEntity("Bus stop added to Bus line", HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.BUS_STOP_ADDED_TO_BUS_LINE), HttpStatus.OK);
         }
     }
 
@@ -66,18 +69,18 @@ public class BusLineResource {
         BusStop busStop = busStopService.getBusStopById(busStopId);
 
         if(busLine == null) {
-            return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_LINE_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
         else if(busStop == null) {
-            return new ResponseEntity("Bus stop does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_STOP_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
         else if(!busLine.isBusStopOnList(busStopId)) {
-            return new ResponseEntity("Bus stop not on list", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_STOP_NOT_ON_LIST), HttpStatus.CONFLICT);
         }
         else {
             busLine.deleteBusStopFromList(busStop);
             busLineService.addBusLine(busLine);
-            return new ResponseEntity("Bus stop deleted from bus line", HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.BUS_STOP_DELETED_FROM_BUS_LINE), HttpStatus.OK);
         }
     }
 
@@ -85,10 +88,10 @@ public class BusLineResource {
     @GetMapping("/bus-lines/{name}")
     public @ResponseBody ResponseEntity getBusLine(@PathVariable("name") String name)  {
         if (null != busLineService.getBusLineByName(name)) {
-            return new ResponseEntity(busLineService.getBusLineByName(name), HttpStatus.OK);
+            return new ResponseEntity<>(busLineService.getBusLineByName(name), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_LINE_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -99,10 +102,10 @@ public class BusLineResource {
         BusLine busLine = busLineService.getBusLineByName(name);
         if (busLine != busLineService.getBusLineByName(name)) {
             busLineService.deleteBusLine(busLine);
-            return new ResponseEntity("Bus line deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.BUS_LINE_DELETE_SUCCESSFUL), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity("Bus line does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_LINE_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 

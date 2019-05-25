@@ -2,6 +2,7 @@ package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.BusLine;
 import ProjektBus.Server.repository.BusLineRepository;
+import ProjektBus.Server.service.interfaces.BusLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
