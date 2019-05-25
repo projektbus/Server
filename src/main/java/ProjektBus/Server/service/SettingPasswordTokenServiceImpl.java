@@ -1,6 +1,7 @@
 package ProjektBus.Server.service;
 import ProjektBus.Server.model.SettingPasswordToken;
 import ProjektBus.Server.repository.SettingPasswordTokenRepository;
+import ProjektBus.Server.service.interfaces.SettingPasswordTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SettingPasswordTokenServiceImpl implements SettingPasswordTokenService {

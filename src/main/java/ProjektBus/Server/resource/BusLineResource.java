@@ -2,8 +2,8 @@ package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.BusLine;
 import ProjektBus.Server.model.BusStop;
-import ProjektBus.Server.service.BusLineService;
-import ProjektBus.Server.service.BusStopService;
+import ProjektBus.Server.service.interfaces.BusLineService;
+import ProjektBus.Server.service.interfaces.BusStopService;
 import ProjektBus.Server.utils.ApplicationError;
 import ProjektBus.Server.utils.ApplicationResponse;
 import ProjektBus.Server.utils.ErrorCodes;

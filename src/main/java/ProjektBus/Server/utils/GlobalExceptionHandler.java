@@ -1,6 +1,7 @@
 package ProjektBus.Server.utils;
 
 import ProjektBus.Server.Application;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -41,6 +42,20 @@ public class GlobalExceptionHandler{
         logger.error(ex.getMessage());
         return new ApplicationError(ex.getMessage());
     }
+
+    @ExceptionHandler(JsonMappingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ApplicationError handleJsonMappingException(JsonMappingException ex, WebRequest request){
+        logger.error(ex.getMessage());
+        String exMessage=ex.getMessage();
+        if(exMessage.contains("HourOfDay") ||exMessage.contains("MinuteOfHour") || exMessage.contains("SecondOfMinute")){
+            return new ApplicationError("Zły format godziny");
+        }
+
+        return new ApplicationError(ex.getMessage());
+    }
+
+
 
 //    @ExceptionHandler(Exception.class)
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

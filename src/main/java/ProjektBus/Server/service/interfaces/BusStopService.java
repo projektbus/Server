@@ -1,4 +1,4 @@
-package ProjektBus.Server.service;
+package ProjektBus.Server.service.interfaces;
 
 import ProjektBus.Server.model.BusStop;
 

@@ -1,7 +1,7 @@
 package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.Carrier;
-import ProjektBus.Server.service.CarrierService;
+import ProjektBus.Server.service.interfaces.CarrierService;
 import ProjektBus.Server.utils.ApplicationError;
 import ProjektBus.Server.utils.ApplicationResponse;
 import ProjektBus.Server.utils.ErrorCodes;

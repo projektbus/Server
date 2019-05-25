@@ -1,6 +1,7 @@
 package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.SettingPasswordToken;
+import ProjektBus.Server.service.interfaces.SettingPasswordTokenService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

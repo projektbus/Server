@@ -33,8 +33,13 @@ public enum ErrorCodes {
     BUS_STOP_DELETED_FROM_BUS_LINE("Przystanek poprawnie usunięty z linii"),
     BUS_STOP_NOT_ON_LIST("Linia nie zewiera tego przeystanku"),
     /*
-            CARRIER
+            BUS CONNECTION
      */
+    BUS_CONNECTION_DELETE_SUCCESSFUL("Połączenia poprawnie usunięte"),
+    BUS_CONNECTION_NOT_FOUND("Nie znalezniono połączenia"),
+    /*
+        CARRIER
+    */
     CARRIER_NOT_FOUND("Przewoźnik nie istnieje"),
     CARRIER_DELETE_SUCCESSFUL("Przewoźnik został usunięty");
 

@@ -2,6 +2,7 @@ package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.ConfirmationToken;
 import ProjektBus.Server.repository.ConfirmationTokenRepository;
+import ProjektBus.Server.service.interfaces.ConfirmationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
