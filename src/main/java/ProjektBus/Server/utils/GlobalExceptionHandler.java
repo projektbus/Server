@@ -1,6 +1,7 @@
 package ProjektBus.Server.utils;
 
 import ProjektBus.Server.Application;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -16,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler{
+public class GlobalExceptionHandler {
 
     private final static Logger logger = Logger.getLogger(Application.class.getName());
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ApplicationError handleMethodArgumentNotValidExceptions(MethodArgumentNotValidException ex, WebRequest request){
+    protected ApplicationError handleMethodArgumentNotValidExceptions(MethodArgumentNotValidException ex, WebRequest request) {
         List<String> errors = new ArrayList<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
@@ -41,6 +42,19 @@ public class GlobalExceptionHandler{
         logger.error(ex.getMessage());
         return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
+
+    @ExceptionHandler(JsonMappingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ApplicationError handleJsonMappingException(JsonMappingException ex, WebRequest request) {
+        logger.error(ex.getMessage());
+        String exMessage = ex.getMessage();
+        if (exMessage.contains("HourOfDay") || exMessage.contains("MinuteOfHour") || exMessage.contains("SecondOfMinute")) {
+            return new ApplicationError(HttpStatus.BAD_REQUEST, "Zły format godziny");
+        }
+
+        return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
 
 //    @ExceptionHandler(Exception.class)
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

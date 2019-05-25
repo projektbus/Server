@@ -21,13 +21,18 @@ public class BusConnectionServiceImpl implements BusConnectionService {
     }
 
     @Override
+    public BusConnection getBusConnectionById(String id) {
+        return busConnectionRepository.findById(id).isPresent() ? busConnectionRepository.findById(id).get() : null;
+    }
+
+    @Override
     public List<BusConnection> getAllBusConnections() {
         return busConnectionRepository.findAll();
     }
 
     @Override
     public List<BusConnection> getBusConnectionByLineAndStop(String busLineId, String busStopId) {
-        return busConnectionRepository.findByBusLineIdAndBusStopId(busLineId,busStopId);
+        return busConnectionRepository.findByBusLineIdAndBusStopId(busLineId, busStopId);
     }
 
     @Override
