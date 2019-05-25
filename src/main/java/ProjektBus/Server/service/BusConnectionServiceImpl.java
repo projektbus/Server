@@ -33,7 +33,7 @@ public class BusConnectionServiceImpl implements BusConnectionService {
 
     @Override
     public List<BusConnection> getBusConnectionByLineAndStop(String busLineId, String busStopId) {
-        return busConnectionRepository.findByBusLineIdAndBusStopId(busLineId,busStopId);
+        return busConnectionRepository.findByBusLineIdAndBusStopId(busLineId, busStopId);
     }
 
     @Override

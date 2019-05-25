@@ -28,7 +28,8 @@ public class BusConnectionResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/bus-connections")
-    public @ResponseBody ResponseEntity getBusConnections() {
+    public @ResponseBody
+    ResponseEntity getBusConnections() {
         return new ResponseEntity<>(busConnectionService.getAllBusConnections(), HttpStatus.OK);
 
     }
@@ -37,22 +38,21 @@ public class BusConnectionResource {
     @DeleteMapping("/bus-connections/{id}")
     public ResponseEntity deleteBusConnection(@PathVariable("id") String id) {
         BusConnection busConnection = busConnectionService.getBusConnectionById(id);
-        if (busConnection!=null) {
+        if (busConnection != null) {
             busConnectionService.deleteBusConnection(busConnection);
             return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.BUS_CONNECTION_DELETE_SUCCESSFUL), HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/bus-connections/{id}")
-    public @ResponseBody ResponseEntity getBusConnection(@PathVariable("id") String id)  {
+    public @ResponseBody
+    ResponseEntity getBusConnection(@PathVariable("id") String id) {
         if (null != busConnectionService.getBusConnectionById(id)) {
             return new ResponseEntity<>(busConnectionService.getBusConnectionById(id), HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
@@ -60,11 +60,11 @@ public class BusConnectionResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/bus-connections/bus-lines/{busLineId}/bus-stops/{busStopId}")
-    public @ResponseBody ResponseEntity getBusConnectionByBusLineAndBusStop(@PathVariable("busLineId") String busLineId,@PathVariable("busStopId") String busStopId)  {
+    public @ResponseBody
+    ResponseEntity getBusConnectionByBusLineAndBusStop(@PathVariable("busLineId") String busLineId, @PathVariable("busStopId") String busStopId) {
         if (null != busConnectionService.getBusConnectionByLineAndStop(busLineId, busStopId)) {
             return new ResponseEntity<>(busConnectionService.getBusConnectionByLineAndStop(busLineId, busStopId), HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
@@ -72,16 +72,13 @@ public class BusConnectionResource {
 
     @CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
     @GetMapping("/bus-connections/bus-lines/{busLineId}/bus-carriers/{carrierId}")
-    public @ResponseBody ResponseEntity getBusLineByBusLineAndCarrier(@PathVariable("busLineId") String busLineId, @PathVariable("carrierId") String carrierId)  {
+    public @ResponseBody
+    ResponseEntity getBusLineByBusLineAndCarrier(@PathVariable("busLineId") String busLineId, @PathVariable("carrierId") String carrierId) {
         if (null != busConnectionService.getBusConnectionByLineAndCarrier(busLineId, carrierId)) {
             return new ResponseEntity<>(busConnectionService.getBusConnectionByLineAndCarrier(busLineId, carrierId), HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
     }
-
-
-
 }

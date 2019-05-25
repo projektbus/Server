@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler{
+public class GlobalExceptionHandler {
 
     private final static Logger logger = Logger.getLogger(Application.class.getName());
 
@@ -54,8 +54,6 @@ public class GlobalExceptionHandler{
 
         return new ApplicationError(ex.getMessage());
     }
-
-
 
 //    @ExceptionHandler(Exception.class)
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
