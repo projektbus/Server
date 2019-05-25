@@ -536,6 +536,204 @@ paths:
                   "Nie znalezniono linii"
                 ]
               }
+  /bus-connections:
+    get:
+      tags:
+        - bus-connections
+      summary: |
+        Get list of Connections
+      operationId: getBusConnections
+      responses:
+        200:
+          description: Returns Connections list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusConnection'
+
+    post:
+      tags:
+        - bus-connections
+      summary: Add new Connection
+      operationId: addBusConnection
+      requestBody:
+        description: BusConnection object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBusConnection'
+            example: {
+              "busLineId": "string",
+              "carrierId": "string",
+              "busStopId": "string",
+              "departureTime": [0,1]
+            }
+      responses:
+        201:
+          description: BusConnection created
+          headers:
+            Location:
+              schema:
+                type: "string"
+              description: URL adress of created BusConnection
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+                example: {
+                  "errors": [
+                    "busLineId: Pole wymagane",
+                    "busLineId: Linia nie istnieje",
+                    "carrierId: Pole wymagane",
+                    "busStopId: Przystanek nie istnieje",
+                    "departureTime: Pole wymagane",
+                    "carrierId: Przewoznik nie istnieje",
+                    "busStopId: Pole wymagane"
+                  ]
+                }
+  /bus-connections/{id}:
+    get:
+      tags:
+        - bus-connections
+      summary: Get busConnection by id
+      operationId: getBusConnectionById
+      parameters:
+        - name: id
+          in: path
+          description: BusConnection id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusConnection"
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono połączenia"
+                ]
+              }
+    delete:
+      tags:
+        - bus-connections
+      summary: Delete busConnection by id
+      operationId: deleteBusConnectionByName
+      parameters:
+        - name: id
+          in: path
+          description: BusConnection id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+              example: {
+                "response": "Połączenie zostało usunięte"
+              }
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono polączenia"
+                ]
+              }
+  /bus-connections/bus-lines/{busLineId}/bus-stops/{busStopId}:
+    get:
+      tags:
+        - bus-connections
+      summary: Get BusConnection by BusLine and BusStop
+      operationId: getBusConnectionByBusLineAndBusLine
+      parameters:
+        - name: busLineId
+          in: path
+          description: BusLine id
+          required: true
+          schema:
+            type: string
+        - name: busStopId
+          in: path
+          description: BusStop id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusConnection"
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono połączenia"
+                ]
+              }
+  /bus-connections/bus-lines/{busLineId}/bus-carriers/{carrierId}:
+    get:
+      tags:
+        - bus-connections
+      summary: Get BusConnection by BusLine and Carrier
+      operationId: getBusConnectionByBusLineAndCarrier
+      parameters:
+        - name: busLineId
+          in: path
+          description: BusLine id
+          required: true
+          schema:
+            type: string
+        - name: carrierId
+          in: path
+          description: Carrier id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: BusConnection response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusConnection"
+        404:
+          description: BusConnection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationError'
+              example: {
+                "errors": [
+                  "Nie znalezniono połączenia"
+                ]
+              }
+
   /confirm-account:
     post:
       tags:
@@ -794,6 +992,39 @@ components:
           type: string
         myGeoPoint:
           $ref: '#/components/schemas/MyGeoPoint'
+
+    BusConnection:
+      properties:
+        id:
+          type: string
+        busLineId:
+          type: string
+        carrierId:
+          type: string
+        busStopId:
+          type: string
+        departureTime:
+          type: array
+          items:
+            type: integer
+
+    NewBusConnection:
+      required:
+        - busLineId
+        - busStopId
+        - carrierId
+        - departureTime
+      properties:
+        busLineId:
+          type: string
+        carrierId:
+          type: string
+        busStopId:
+          type: string
+        departureTime:
+          type: array
+          items:
+            type: integer
 
     MyGeoPoint:
       required:

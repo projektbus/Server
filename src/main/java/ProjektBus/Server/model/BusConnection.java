@@ -19,7 +19,7 @@ public class BusConnection {
     @Id
     private String id;
     @NotNull(message = "{field.required}")
-    @ExistBusLine(message = "{busLine.exists}")
+    @ExistBusLine(message = "{busLine.not.exists}")
     private String busLineId;
     @NotNull(message = "{field.required}")
     @ExistCarrier(message = "{carrier.not.exists}")
