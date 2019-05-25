@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ApplicationError handleMethodArgumentNotValidExceptions(MethodArgumentNotValidException ex, WebRequest request) {
+    protected ApplicationError handleMethodArgumentNotValidExceptions(MethodArgumentNotValidException ex, WebRequest request){
         List<String> errors = new ArrayList<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
@@ -33,28 +33,27 @@ public class GlobalExceptionHandler {
         }
 
         logger.error(ex.getMessage());
-        return new ApplicationError(HttpStatus.BAD_REQUEST, errors);
+        return new ApplicationError(errors);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ApplicationError handleMissingServletRequestParameterException(MissingServletRequestParameterException ex, WebRequest request) {
         logger.error(ex.getMessage());
-        return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return new ApplicationError(ex.getMessage());
     }
 
     @ExceptionHandler(JsonMappingException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ApplicationError handleJsonMappingException(JsonMappingException ex, WebRequest request) {
+    protected ApplicationError handleJsonMappingException(JsonMappingException ex, WebRequest request){
         logger.error(ex.getMessage());
-        String exMessage = ex.getMessage();
-        if (exMessage.contains("HourOfDay") || exMessage.contains("MinuteOfHour") || exMessage.contains("SecondOfMinute")) {
-            return new ApplicationError(HttpStatus.BAD_REQUEST, "Zły format godziny");
+        String exMessage=ex.getMessage();
+        if(exMessage.contains("HourOfDay") ||exMessage.contains("MinuteOfHour") || exMessage.contains("SecondOfMinute")){
+            return new ApplicationError("Zły format godziny");
         }
 
-        return new ApplicationError(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return new ApplicationError(ex.getMessage());
     }
-
 
 //    @ExceptionHandler(Exception.class)
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

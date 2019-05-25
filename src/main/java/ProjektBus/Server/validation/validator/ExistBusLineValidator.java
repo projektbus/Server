@@ -1,6 +1,6 @@
 package ProjektBus.Server.validation.validator;
 
-import ProjektBus.Server.service.BusLineService;
+import ProjektBus.Server.service.interfaces.BusLineService;
 import ProjektBus.Server.validation.validationInterfaces.ExistBusLine;
 import org.springframework.beans.factory.annotation.Autowired;
 

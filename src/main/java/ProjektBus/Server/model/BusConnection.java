@@ -19,13 +19,13 @@ public class BusConnection {
     @Id
     private String id;
     @NotNull(message = "{field.required}")
-    @ExistBusLine(message = "{busLine.exists}")
+    @ExistBusLine(message = "{busLine.not.exists}")
     private String busLineId;
     @NotNull(message = "{field.required}")
-    @ExistCarrier(message = "{carrier.exists}")
+    @ExistCarrier(message = "{carrier.not.exists}")
     private String carrierId;
     @NotNull(message = "{field.required}")
-    @ExistBusStop(message = "{busStop.exists}")
+    @ExistBusStop (message = "{busStop.not.exists}")
     private String busStopId;
     @NotNull(message = "{field.required}")
     private LocalTime departureTime;

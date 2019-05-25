@@ -1,6 +1,6 @@
 package ProjektBus.Server.validation.validator;
 
-import ProjektBus.Server.service.UserService;
+import ProjektBus.Server.service.interfaces.UserService;
 import ProjektBus.Server.validation.validationInterfaces.NotExistLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 

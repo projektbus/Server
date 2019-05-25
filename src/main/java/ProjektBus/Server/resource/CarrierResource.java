@@ -1,8 +1,10 @@
 package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.Carrier;
-import ProjektBus.Server.service.CarrierService;
+import ProjektBus.Server.service.interfaces.CarrierService;
+import ProjektBus.Server.utils.ApplicationError;
 import ProjektBus.Server.utils.ApplicationResponse;
+import ProjektBus.Server.utils.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ public class CarrierResource {
     @GetMapping("/carriers")
     public @ResponseBody
     ResponseEntity getCarriers() {
-        return new ResponseEntity(carrierService.getAllCarriers(), HttpStatus.OK);
+        return new ResponseEntity<>(carrierService.getAllCarriers(), HttpStatus.OK);
 
     }
 
@@ -39,10 +41,10 @@ public class CarrierResource {
     @GetMapping("/carriers/{id}")
     public @ResponseBody ResponseEntity getCarrier(@PathVariable("id") String id)  {
         if (null != carrierService.getCarrierById(id)) {
-            return new ResponseEntity(carrierService.getCarrierById(id), HttpStatus.OK);
+            return new ResponseEntity<>(carrierService.getCarrierById(id), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity(new ApplicationResponse("Carrier does not exist"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.CARRIER_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -53,10 +55,10 @@ public class CarrierResource {
         Carrier carrier = carrierService.getCarrierById(id);
         if (carrier != carrierService.getCarrierById(id)) {
             carrierService.deleteCarrier(carrier);
-            return new ResponseEntity(new ApplicationResponse("Carrier deleted successfully"), HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.CARRIER_DELETE_SUCCESSFUL), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity(new ApplicationResponse("Carrier does not exist"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.CARRIER_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 }

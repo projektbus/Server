@@ -28,7 +28,7 @@ public class BusLine {
     private String name;
 
     @NotNull(message = "{field.required}")
-    @ExistBusStop(message = "{busStop.exists}")
+    @ExistBusStop(message = "{busStop.not.exists}")
     private String startBusStopId;
 
     @NotNull(message = "{field.required}")

@@ -2,6 +2,7 @@ package ProjektBus.Server.service;
 
 import ProjektBus.Server.model.BusConnection;
 import ProjektBus.Server.repository.BusConnectionRepository;
+import ProjektBus.Server.service.interfaces.BusConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

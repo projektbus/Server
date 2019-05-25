@@ -1,7 +1,10 @@
 package ProjektBus.Server.resource;
 
 import ProjektBus.Server.model.BusConnection;
-import ProjektBus.Server.service.BusConnectionService;
+import ProjektBus.Server.service.interfaces.BusConnectionService;
+import ProjektBus.Server.utils.ApplicationError;
+import ProjektBus.Server.utils.ApplicationResponse;
+import ProjektBus.Server.utils.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +30,7 @@ public class BusConnectionResource {
     @GetMapping("/bus-connections")
     public @ResponseBody
     ResponseEntity getBusConnections() {
-        return new ResponseEntity(busConnectionService.getAllBusConnections(), HttpStatus.OK);
+        return new ResponseEntity<>(busConnectionService.getAllBusConnections(), HttpStatus.OK);
 
     }
 
@@ -37,9 +40,9 @@ public class BusConnectionResource {
         BusConnection busConnection = busConnectionService.getBusConnectionById(id);
         if (busConnection != null) {
             busConnectionService.deleteBusConnection(busConnection);
-            return new ResponseEntity("Bus connection deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>(new ApplicationResponse(ErrorCodes.BUS_CONNECTION_DELETE_SUCCESSFUL), HttpStatus.OK);
         } else {
-            return new ResponseEntity("Bus connection does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -48,9 +51,9 @@ public class BusConnectionResource {
     public @ResponseBody
     ResponseEntity getBusConnection(@PathVariable("id") String id) {
         if (null != busConnectionService.getBusConnectionById(id)) {
-            return new ResponseEntity(busConnectionService.getBusConnectionById(id), HttpStatus.OK);
+            return new ResponseEntity<>(busConnectionService.getBusConnectionById(id), HttpStatus.OK);
         } else {
-            return new ResponseEntity("Bus connection does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -60,9 +63,9 @@ public class BusConnectionResource {
     public @ResponseBody
     ResponseEntity getBusConnectionByBusLineAndBusStop(@PathVariable("busLineId") String busLineId, @PathVariable("busStopId") String busStopId) {
         if (null != busConnectionService.getBusConnectionByLineAndStop(busLineId, busStopId)) {
-            return new ResponseEntity(busConnectionService.getBusConnectionByLineAndStop(busLineId, busStopId), HttpStatus.OK);
+            return new ResponseEntity<>(busConnectionService.getBusConnectionByLineAndStop(busLineId, busStopId), HttpStatus.OK);
         } else {
-            return new ResponseEntity("Bus connection does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -72,9 +75,9 @@ public class BusConnectionResource {
     public @ResponseBody
     ResponseEntity getBusLineByBusLineAndCarrier(@PathVariable("busLineId") String busLineId, @PathVariable("carrierId") String carrierId) {
         if (null != busConnectionService.getBusConnectionByLineAndCarrier(busLineId, carrierId)) {
-            return new ResponseEntity(busConnectionService.getBusConnectionByLineAndCarrier(busLineId, carrierId), HttpStatus.OK);
+            return new ResponseEntity<>(busConnectionService.getBusConnectionByLineAndCarrier(busLineId, carrierId), HttpStatus.OK);
         } else {
-            return new ResponseEntity("Bus connection does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApplicationError(ErrorCodes.BUS_CONNECTION_NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
     }

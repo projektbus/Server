@@ -1,6 +1,7 @@
 package ProjektBus.Server.config;
 
 import ProjektBus.Server.service.*;
+import ProjektBus.Server.service.interfaces.*;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
