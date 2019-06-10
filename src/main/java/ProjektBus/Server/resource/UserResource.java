@@ -164,7 +164,7 @@ public class UserResource {
         passwordResetEmail.setTo(user.getEmail());
         passwordResetEmail.setSubject("Remind password");
         passwordResetEmail.setText("To set new password, click the link below:\n"
-                + "https://peaceful-sierra-14544.herokuapp.com/remind-password?tokenCode=" + resetToken.getTokenCode());
+                + "https://project-bus-web.herokuapp.com/change/" + resetToken.getTokenCode());
 
         emailSenderService.sendEmail(passwordResetEmail);
     }
